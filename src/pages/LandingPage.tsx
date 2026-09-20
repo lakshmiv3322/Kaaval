@@ -105,7 +105,7 @@ const ScamAnatomySection: React.FC = () => {
 };
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => (
-  <main className="overflow-hidden">
+  <main className="relative overflow-x-clip">
     <HeroSection onNavigate={onNavigate} />
     <NinetySecondsSection />
     <BentoGridSection />

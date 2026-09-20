@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Languages,
@@ -52,7 +52,7 @@ export const BentoGridSection: React.FC = () => {
   };
 
   return (
-    <section className="py-24 lg:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Section Header */}
       <div className="text-center max-w-2xl mx-auto mb-16">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight font-sans">

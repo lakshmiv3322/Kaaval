@@ -1,31 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { PhoneMockup } from './PhoneMockup';
-import { Shield, Users, Radio, AlertOctagon, CheckCircle2, PhoneCall } from 'lucide-react';
+import {
+  Users,
+  PhoneCall,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Pause,
+  RotateCcw,
+  ShieldAlert
+} from 'lucide-react';
 
 export const NinetySecondsSection: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const shouldReduceMotion = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
-
   // Active step index: 0, 1, 2, 3, 4
   const [activeStep, setActiveStep] = useState(0);
-
-  useEffect(() => {
-    if (shouldReduceMotion) return;
-    const unsubscribe = scrollYProgress.on('change', (latest) => {
-      const step = Math.min(4, Math.floor(latest * 5));
-      setActiveStep(step);
-    });
-    return () => unsubscribe();
-  }, [scrollYProgress, shouldReduceMotion]);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const steps = [
     {
+      label: 'Call Inception',
       titlePrefix: 'The call',
       serifKey: 'comes in.',
       titleSuffix: '',
@@ -33,8 +28,10 @@ export const NinetySecondsSection: React.FC = () => {
         'An unknown number rings your mother’s phone. The caller sounds calm, polite, and completely official.',
       stageRisk: 12,
       tactic: null,
+      severityColor: 'text-[#9CA3AF]',
     },
     {
+      label: 'Police Claim',
       titlePrefix: 'They claim to be',
       serifKey: 'police.',
       titleSuffix: '',
@@ -42,8 +39,10 @@ export const NinetySecondsSection: React.FC = () => {
         'They cite badge numbers, Supreme Court orders, and CBI headquarters to engineer immediate psychological compliance.',
       stageRisk: 28,
       tactic: 'Authority claim',
+      severityColor: 'text-amber-400',
     },
     {
+      label: 'Legal Panic',
       titlePrefix: 'They make it feel',
       serifKey: 'urgent.',
       titleSuffix: '',
@@ -51,8 +50,10 @@ export const NinetySecondsSection: React.FC = () => {
         'Fabricated legal notices under Money Laundering Act Section 420 trigger immediate panic and disorientation.',
       stageRisk: 58,
       tactic: 'Arrest threat',
+      severityColor: 'text-orange-400',
     },
     {
+      label: 'Secrecy Trap',
       titlePrefix: 'They say:',
       serifKey: 'tell no one.',
       titleSuffix: '',
@@ -60,8 +61,10 @@ export const NinetySecondsSection: React.FC = () => {
         'The core coercion trap: ‘You are placed under Digital Arrest. Turn on Skype video now and do not alert your family.’',
       stageRisk: 92,
       tactic: 'Secrecy demand',
+      severityColor: 'text-red-400',
     },
     {
+      label: 'Family Bridge',
       titlePrefix: 'Kaaval',
       serifKey: 'breaks the silence.',
       titleSuffix: '',
@@ -69,159 +72,237 @@ export const NinetySecondsSection: React.FC = () => {
         'Before intimidation turns into a bank transfer, Kaaval issues on-screen native language warnings and rings your phone with a one-tap join.',
       stageRisk: 92,
       tactic: 'Emergency Family Bridge',
+      severityColor: 'text-emerald-400',
     },
   ];
 
-  // If user prefers reduced motion, render a clean vertical sequential list
-  if (shouldReduceMotion) {
-    return (
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-xs font-mono text-[#5B8FFF] uppercase">
-            Defensive Architecture
-          </span>
-          <h2 className="mt-2 text-3xl sm:text-4xl font-semibold text-white tracking-tight font-sans">
-            The Ninety Seconds
-          </h2>
-          <p className="mt-3 text-[17px] text-[#9CA3AF] leading-relaxed">
-            How a digital arrest scam evolves, and how Kaaval intercepts it before funds leave the account.
-          </p>
-        </div>
+  // Auto-play timer through stages
+  useEffect(() => {
+    if (isPlaying) {
+      timerRef.current = setInterval(() => {
+        setActiveStep((prev) => (prev + 1) % steps.length);
+      }, 5000);
+    }
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [isPlaying, steps.length]);
 
-        <div className="space-y-12">
-          {steps.map((st, idx) => (
-            <div
-              key={idx}
-              className="p-8 rounded-3xl bg-[#11161D] border border-[#1E293B] grid grid-cols-1 md:grid-cols-12 gap-8 items-center"
-            >
-              <div className="md:col-span-7">
-                <span className="text-xs font-mono text-[#5B8FFF]">0{idx + 1} / 05</span>
-                <h3 className="text-2xl sm:text-3xl font-semibold text-white mt-2">
-                  {st.titlePrefix}{' '}
-                  <span className="font-serif italic text-[#C7D7FF] font-normal">
-                    {st.serifKey}
-                  </span>{' '}
-                  {st.titleSuffix}
-                </h3>
-                <p className="mt-3 text-[17px] text-[#9CA3AF] leading-relaxed max-w-[62ch]">
-                  {st.description}
-                </p>
-              </div>
-              <div className="md:col-span-5 flex justify-center items-start h-[558px]">
-                <div className="scale-90 origin-top">
-                  <PhoneMockup manualStep={idx + 1} staticAlert isHeroLoop={false} />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
+  const handleStepSelect = (idx: number) => {
+    setActiveStep(idx);
+    setIsPlaying(false);
+  };
 
-  // Scroll-driven sticky stage (400vh on desktop, 280vh on tablet, 220vh on mobile)
+  const handlePrev = () => {
+    setActiveStep((prev) => (prev === 0 ? steps.length - 1 : prev - 1));
+    setIsPlaying(false);
+  };
+
+  const handleNext = () => {
+    setActiveStep((prev) => (prev + 1) % steps.length);
+    setIsPlaying(false);
+  };
+
   const isRedStage = activeStep === 3;
   const isBridgeStage = activeStep === 4;
 
   return (
-    <div
-      id="how-it-works"
-      ref={containerRef}
-      className="relative h-[220vh] sm:h-[280vh] lg:h-[400vh]"
-    >
-      {/* Sticky Stage Viewport */}
+    <section id="how-it-works" className="relative py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* Section Header */}
+      <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12">
+        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#11161D] border border-[#1E293B] text-xs font-mono text-[#5B8FFF] uppercase tracking-wider mb-4">
+          Defensive Architecture
+        </span>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight font-sans">
+          The Ninety Seconds
+        </h2>
+        <p className="mt-3 text-[16px] sm:text-[17px] text-[#9CA3AF] leading-relaxed">
+          How a digital arrest scam evolves, and how Kaaval intercepts it before funds leave the account.
+        </p>
+      </div>
+
+      {/* Interactive Step Navigator */}
+      <div className="mb-10 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#11161D]/80 border border-[#1E293B] p-2 sm:p-2.5 rounded-2xl backdrop-blur-sm">
+        {/* Step Pills */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+          {steps.map((st, idx) => {
+            const isActive = activeStep === idx;
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleStepSelect(idx)}
+                className={`relative px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 cursor-pointer flex items-center gap-2 ${
+                  isActive
+                    ? 'bg-[#5B8FFF] text-white shadow-md shadow-[#5B8FFF]/25'
+                    : 'text-[#9CA3AF] hover:text-white hover:bg-[#1E293B]/60'
+                }`}
+              >
+                <span className={`font-mono text-[11px] ${isActive ? 'text-white/80' : 'text-[#64748B]'}`}>
+                  0{idx + 1}
+                </span>
+                <span className="whitespace-nowrap">{st.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Stepper Controls (Prev, Play/Pause, Next) */}
+        <div className="flex items-center gap-1.5 self-center sm:self-auto">
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous scenario step"
+            className="p-2 rounded-lg bg-[#1E293B]/50 hover:bg-[#1E293B] text-[#CBD5E1] hover:text-white transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsPlaying(!isPlaying)}
+            aria-label={isPlaying ? 'Pause progression' : 'Play progression'}
+            className="px-2.5 py-2 rounded-lg bg-[#1E293B]/50 hover:bg-[#1E293B] text-[#CBD5E1] hover:text-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-mono"
+          >
+            {isPlaying ? (
+              <>
+                <Pause className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">Pause</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="hidden sm:inline">Auto</span>
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next scenario step"
+            className="p-2 rounded-lg bg-[#1E293B]/50 hover:bg-[#1E293B] text-[#CBD5E1] hover:text-white transition-colors cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Interactive Stage */}
       <div
-        className={`sticky top-0 h-screen w-full flex items-center overflow-hidden px-4 sm:px-6 lg:px-8 transition-colors duration-700 ${
+        className={`relative rounded-3xl border transition-colors duration-700 p-6 sm:p-10 lg:p-12 overflow-hidden ${
           isRedStage
-            ? 'bg-[#150D10]'
-            : 'bg-[#0B0F14]'
+            ? 'bg-[#150D10] border-red-900/40'
+            : isBridgeStage
+            ? 'bg-[#0E1724] border-emerald-900/40'
+            : 'bg-[#0E131A] border-[#1E293B]'
         }`}
       >
-        {/* Subtle background red pulse during step 4 (screen-shake simulation) */}
+        {/* Subtle background glow */}
         {isRedStage && (
           <div className="pointer-events-none absolute inset-0 bg-red-600/10 animate-pulse" />
         )}
+        {isBridgeStage && (
+          <div className="pointer-events-none absolute inset-0 bg-emerald-500/5" />
+        )}
 
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
-          
-          {/* Progress Indicator (Left side dots) */}
-          <div className="hidden lg:flex lg:col-span-1 flex-col items-center gap-6">
-            <div className="w-[2px] h-48 bg-[#1E293B] relative rounded-full overflow-hidden">
-              <motion.div
-                className="w-full bg-[#5B8FFF] rounded-full"
-                style={{
-                  height: `${(activeStep / 4) * 100}%`,
-                  transition: 'height 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
-                }}
-              />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+          {/* Left Column: Big editorial storytelling sentence & explanation */}
+          <div className="lg:col-span-7 flex flex-col justify-center text-left">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-xs font-mono text-[#5B8FFF]">
+                SCENARIO PROGRESSION — 0{activeStep + 1} / 05
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1E293B]" />
+              <span className="text-xs font-mono text-[#9CA3AF]">
+                {steps[activeStep].label}
+              </span>
             </div>
-            <div className="flex flex-col gap-3">
-              {[0, 1, 2, 3, 4].map((dot) => (
-                <div
-                  key={dot}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                    activeStep === dot
-                      ? 'bg-[#5B8FFF] scale-125 ring-4 ring-[#5B8FFF]/20'
-                      : activeStep > dot
-                      ? 'bg-[#5B8FFF]/60'
-                      : 'bg-[#1E293B]'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Left Column: Big editorial storytelling sentence */}
-          <div className="lg:col-span-6 flex flex-col justify-center text-left">
-            <span className="text-xs font-mono text-[#5B8FFF] mb-3">
-              SCENARIO PROGRESSION — 0{activeStep + 1} / 05
-            </span>
 
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStep}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className={isRedStage ? 'animate-[shake_0.3s_ease-in-out]' : ''}
               >
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white leading-[1.15] font-sans">
-                  {steps[activeStep].titlePrefix}{' '}
-                  <span className="font-serif italic text-[#C7D7FF] font-normal">
-                    {steps[activeStep].serifKey}
-                  </span>{' '}
-                  {steps[activeStep].titleSuffix}
-                </h2>
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-white leading-[1.2] font-sans min-h-[72px] sm:min-h-[88px] flex items-center">
+                  <span>
+                    {steps[activeStep].titlePrefix}{' '}
+                    <span className="font-serif italic text-[#C7D7FF] font-normal">
+                      {steps[activeStep].serifKey}
+                    </span>{' '}
+                    {steps[activeStep].titleSuffix}
+                  </span>
+                </h3>
 
-                <p className="mt-5 text-[17px] sm:text-[18px] text-[#CBD5E1] leading-[1.6] max-w-[54ch]">
+                <p className="mt-4 text-[16px] sm:text-[17px] text-[#CBD5E1] leading-[1.6] max-w-[54ch]">
                   {steps[activeStep].description}
                 </p>
 
-                {/* Tactic Pill */}
-                {steps[activeStep].tactic && (
-                  <div className="mt-6 inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#11161D] border border-[#1E293B] text-xs font-medium text-[#CBD5E1]">
-                    <span className="w-2 h-2 rounded-full bg-red-400" />
-                    <span>Identified Threat: {steps[activeStep].tactic}</span>
+                {/* Threat or Action Tactic Badge */}
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  {steps[activeStep].tactic ? (
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#11161D] border border-[#1E293B] text-xs font-medium text-[#CBD5E1]">
+                      <span className={`w-2 h-2 rounded-full ${
+                        activeStep === 4 ? 'bg-emerald-400' : 'bg-red-400'
+                      }`} />
+                      <span>{activeStep === 4 ? 'Intervention:' : 'Identified Threat:'} {steps[activeStep].tactic}</span>
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#11161D] border border-[#1E293B] text-xs font-medium text-[#9CA3AF]">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                      <span>Status: Call Initiated (Analyzing audio telemetry)</span>
+                    </div>
+                  )}
+
+                  {/* Stage Jump Shortcuts */}
+                  <div className="inline-flex items-center gap-2 text-xs text-[#9CA3AF]">
+                    <span>Risk:</span>
+                    <span className={`font-mono font-bold ${steps[activeStep].severityColor}`}>
+                      {steps[activeStep].stageRisk}/100
+                    </span>
                   </div>
-                )}
+                </div>
+
+                {/* Step navigation actions */}
+                <div className="mt-8 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="px-4 py-2 rounded-xl bg-[#1E293B] hover:bg-[#334155] text-white text-xs font-medium transition-colors flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>{activeStep === steps.length - 1 ? 'Restart Scenario' : 'Next Stage'}</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                  {activeStep > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleStepSelect(0)}
+                      className="px-3 py-2 rounded-xl text-xs text-[#9CA3AF] hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>Start over</span>
+                    </button>
+                  )}
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>
 
           {/* Right Column: Phone(s) Display */}
-          <div className="lg:col-span-5 flex justify-center items-center relative">
+          <div className="lg:col-span-5 flex justify-center items-center relative min-h-[520px]">
             {/* Primary Elder Phone */}
-            <div className="h-[496px] sm:h-[589px] flex justify-center items-start">
+            <div className="flex justify-center items-start">
               <motion.div
                 animate={{
-                  x: isBridgeStage ? -40 : 0,
-                  scale: isBridgeStage ? 0.9 : 1,
+                  x: isBridgeStage ? -30 : 0,
+                  scale: isBridgeStage ? 0.92 : 1,
                 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                className="relative z-10 h-[496px] sm:h-[589px] flex justify-center items-start"
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="relative z-10 flex justify-center items-start"
               >
-                <div className="scale-[0.8] origin-top sm:scale-95 transition-transform">
+                <div className="scale-[0.85] sm:scale-95 origin-top transition-transform">
                   <PhoneMockup
                     manualStep={activeStep + 1}
                     isHeroLoop={false}
@@ -234,22 +315,22 @@ export const NinetySecondsSection: React.FC = () => {
             <AnimatePresence>
               {isBridgeStage && (
                 <motion.div
-                  initial={{ opacity: 0, x: 80, scale: 0.85 }}
-                  animate={{ opacity: 1, x: 50, scale: 0.9 }}
-                  exit={{ opacity: 0, x: 80, scale: 0.85 }}
-                  transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute z-20 hidden sm:block top-10"
+                  initial={{ opacity: 0, x: 60, scale: 0.85 }}
+                  animate={{ opacity: 1, x: 40, scale: 0.9 }}
+                  exit={{ opacity: 0, x: 60, scale: 0.85 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute z-20 hidden sm:block top-6"
                 >
-                  <div className="w-[280px] h-[520px] rounded-[44px] p-2 bg-[#162232] border-2 border-[#5B8FFF]/60 shadow-2xl flex flex-col justify-between p-4 text-center">
+                  <div className="w-[270px] h-[500px] rounded-[40px] bg-[#162232] border-2 border-[#5B8FFF]/60 shadow-2xl flex flex-col justify-between p-4 text-center">
                     {/* Family Phone Header */}
-                    <div className="pt-4">
+                    <div className="pt-3">
                       <div className="w-10 h-10 rounded-full bg-[#5B8FFF] mx-auto flex items-center justify-center text-white mb-2 shadow-lg shadow-[#5B8FFF]/40">
                         <Users className="w-5 h-5" />
                       </div>
                       <span className="text-[10px] font-mono text-[#5B8FFF] uppercase">
                         Family Sentinel
                       </span>
-                      <h4 className="text-base font-bold text-white mt-1">
+                      <h4 className="text-sm font-bold text-white mt-1">
                         Emergency Alert
                       </h4>
                       <p className="text-xs text-[#CBD5E1]">
@@ -258,7 +339,7 @@ export const NinetySecondsSection: React.FC = () => {
                     </div>
 
                     {/* 3-Way Bridge Diagram */}
-                    <div className="p-3 rounded-2xl bg-[#0B0F14] border border-[#5B8FFF]/30 my-4 space-y-3">
+                    <div className="p-3 rounded-2xl bg-[#0B0F14] border border-[#5B8FFF]/30 my-3 space-y-2.5">
                       <div className="flex items-center justify-between text-[11px] font-mono text-[#CBD5E1]">
                         <span>Mother (Elder)</span>
                         <span className="text-emerald-400">Connected</span>
@@ -274,12 +355,12 @@ export const NinetySecondsSection: React.FC = () => {
                     </div>
 
                     {/* Connected Badge */}
-                    <div className="py-2.5 px-4 rounded-xl bg-emerald-600 text-white font-medium text-xs flex items-center justify-center gap-2">
-                      <PhoneCall className="w-4 h-4 animate-bounce" />
+                    <div className="py-2 px-3 rounded-xl bg-emerald-600 text-white font-medium text-xs flex items-center justify-center gap-2">
+                      <PhoneCall className="w-3.5 h-3.5 animate-bounce" />
                       <span>Speaking with Mother</span>
                     </div>
 
-                    <div className="w-20 h-1 bg-white/20 rounded-full mx-auto" />
+                    <div className="w-16 h-1 bg-white/20 rounded-full mx-auto" />
                   </div>
                 </motion.div>
               )}
@@ -287,6 +368,6 @@ export const NinetySecondsSection: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
