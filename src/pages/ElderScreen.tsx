@@ -27,7 +27,6 @@ import { CallSession, DetectedTactic, TranscriptChunk, AnalysisResult } from '..
 import { SCENARIO_PRESETS, REGIONAL_WARNINGS } from '../services/scamScenarios';
 import { api } from '../services/api';
 import { syncBus } from '../services/syncChannel';
-import { Shield3D } from '../components/three/Shield3D';
 import { RiskMeter } from '../components/ui/RiskMeter';
 import { TacticChip } from '../components/ui/TacticChip';
 import { AudioWaveVisualizer } from '../components/ui/AudioWaveVisualizer';
@@ -719,8 +718,32 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate, embedded =
         {/* State 1: IDLE */}
         {!isCallActive && callSession?.status !== 'ended' && (
           <div className="text-center py-10">
-            <div className="relative inline-block mb-6">
-              <Shield3D riskScore={0} size={160} />
+            <div className="relative inline-flex items-center justify-center mb-6">
+              {/* Outer soft glowing ambient ring with reduced-motion aware pulse */}
+              <div
+                className={`absolute w-36 h-36 rounded-full bg-emerald-500/20 blur-xl transition-all ${
+                  reduceMotion ? '' : 'motion-safe:animate-pulse'
+                }`}
+                aria-hidden="true"
+              />
+              {/* Middle circular badge with subtle border */}
+              <div className="relative flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-[#121821] border-2 border-emerald-500/40 shadow-xl shadow-emerald-950/40">
+                {/* Soft gradient interior fill */}
+                <div
+                  className="absolute inset-2 rounded-full bg-gradient-to-b from-emerald-500/20 to-emerald-500/5"
+                  aria-hidden="true"
+                />
+                {/* 2D Shield Icon */}
+                <Shield
+                  className="relative w-12 h-12 sm:w-14 sm:h-14 text-emerald-400 drop-shadow-[0_0_12px_rgba(34,197,94,0.45)]"
+                  aria-hidden="true"
+                />
+                {/* Active protection indicator dot */}
+                <span
+                  className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#121821]"
+                  aria-hidden="true"
+                />
+              </div>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
               Kaaval Shield is Guarding
@@ -777,7 +800,26 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate, embedded =
               <div className="my-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
                 <RiskMeter score={currentRisk} size="lg" />
                 <div className="flex flex-col items-center">
-                  <Shield3D riskScore={currentRisk} size={140} />
+                  <div
+                    className={`relative flex items-center justify-center w-28 h-28 rounded-full border-2 transition-all duration-500 ${
+                      currentRisk >= 65
+                        ? 'bg-red-950/40 border-red-500/50 shadow-lg shadow-red-900/30'
+                        : currentRisk >= 30
+                        ? 'bg-amber-950/40 border-amber-500/50 shadow-lg shadow-amber-900/30'
+                        : 'bg-emerald-950/40 border-emerald-500/50 shadow-lg shadow-emerald-900/30'
+                    }`}
+                  >
+                    <Shield
+                      className={`w-12 h-12 transition-colors duration-500 ${
+                        currentRisk >= 65
+                          ? 'text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+                          : currentRisk >= 30
+                          ? 'text-amber-400 drop-shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                          : 'text-emerald-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]'
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </div>
                   <span className="text-xs font-mono text-[#9CA3AF] mt-2">
                     {currentRisk >= 65 ? '🔴 Danger State' : currentRisk >= 30 ? '🟡 Warning State' : '🟢 Safe State'}
                   </span>
