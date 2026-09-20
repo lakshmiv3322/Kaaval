@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, ChevronDown, CheckCircle } from 'lucide-react';
 import { ShaderGradientHero } from '../shaders/ShaderGradientHero';
@@ -151,7 +151,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
         </div>
 
         {/* Right Column: Realistic Phone Mockup */}
-        <div className="lg:col-span-5 flex justify-center items-center">
+        <div className="lg:col-span-5 flex justify-center items-start h-[527px] sm:h-[620px]">
           <motion.div
             initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -160,13 +160,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               delay: shouldReduceMotion ? 0 : 0.3,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="scale-[0.85] origin-top sm:scale-100 transition-transform"
+            className="h-[527px] sm:h-[620px] flex items-start justify-center"
           >
-            <PhoneMockup
-              onRiskUpdate={setHeroRiskScore}
-              isHeroLoop={!shouldReduceMotion}
-              staticAlert={Boolean(shouldReduceMotion)}
-            />
+            <div className="scale-[0.85] origin-top sm:scale-100 transition-transform">
+              <PhoneMockup
+                onRiskUpdate={setHeroRiskScore}
+                isHeroLoop={!shouldReduceMotion}
+                staticAlert={Boolean(shouldReduceMotion)}
+              />
+            </div>
           </motion.div>
         </div>
       </div>

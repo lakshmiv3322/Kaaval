@@ -191,10 +191,12 @@ const handleAnalyze = async (req: express.Request, res: express.Response) => {
 
   const ai = getGeminiClient();
   if (ai) {
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.8-flash',
-        contents: `You are Kaaval's AI Scam Classifier protecting elderly Indian citizens from "Digital Arrest", courier narcotics extortion, fake CBI/Police interrogation, and electricity bill fraud.
+    const candidateModels = ['gemini-3.6-flash', 'gemini-3.8-flash', 'gemini-3.1-flash-lite'];
+    for (const candidateModel of candidateModels) {
+      try {
+        const response = await ai.models.generateContent({
+          model: candidateModel,
+          contents: `You are Kaaval's AI Scam Classifier protecting elderly Indian citizens from "Digital Arrest", courier narcotics extortion, fake CBI/Police interrogation, and electricity bill fraud.
 Analyze the following conversation transcript.
 NOTE: Phone numbers, account numbers, Aadhaar digits, and OTPs have been redacted for privacy as [REDACTED_*].
 
@@ -207,105 +209,107 @@ Instructions:
 1. Assess the risk of coercive fraud, authority impersonation, digital arrest, secrecy demands, and financial extortion.
 2. If this is a benign family call (e.g. daughter asking about medicine, dinner, groceries, routine money talk), set riskScore low (0-15) and benignSignals appropriately.
 3. Every tactic quote MUST BE a verbatim substring present in the transcript above. Do NOT paraphrase or invent quotes.`,
-        config: {
-          responseMimeType: 'application/json',
-          responseSchema: {
-            type: 'OBJECT',
-            properties: {
-              riskScore: { type: 'INTEGER' },
-              riskLevel: { type: 'STRING' },
-              tactics: {
-                type: 'ARRAY',
-                items: {
-                  type: 'OBJECT',
-                  properties: {
-                    name: { type: 'STRING' },
-                    category: { type: 'STRING' },
-                    severity: { type: 'STRING' },
-                    quote: { type: 'STRING' },
-                    description: { type: 'STRING' }
-                  },
-                  required: ['name', 'category', 'quote', 'description']
+          config: {
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'OBJECT',
+              properties: {
+                riskScore: { type: 'INTEGER' },
+                riskLevel: { type: 'STRING' },
+                tactics: {
+                  type: 'ARRAY',
+                  items: {
+                    type: 'OBJECT',
+                    properties: {
+                      name: { type: 'STRING' },
+                      category: { type: 'STRING' },
+                      severity: { type: 'STRING' },
+                      quote: { type: 'STRING' },
+                      description: { type: 'STRING' }
+                    },
+                    required: ['name', 'category', 'quote', 'description']
+                  }
+                },
+                summary: { type: 'STRING' },
+                benignSignals: {
+                  type: 'ARRAY',
+                  items: { type: 'STRING' }
                 }
               },
-              summary: { type: 'STRING' },
-              benignSignals: {
-                type: 'ARRAY',
-                items: { type: 'STRING' }
-              }
-            },
-            required: ['riskScore', 'riskLevel', 'tactics', 'summary']
+              required: ['riskScore', 'riskLevel', 'tactics', 'summary']
+            }
+          }
+        });
+
+        const parsed = JSON.parse(response.text || '{}');
+        
+        // Server-side validation: Drop any tactic quote that is NOT a verbatim substring of original or redacted transcript
+        const validTactics: DetectedTactic[] = [];
+        if (Array.isArray(parsed.tactics)) {
+          for (const t of parsed.tactics) {
+            if (!t.quote) continue;
+            const cleanQuote = t.quote.trim().toLowerCase();
+            const inOriginal = text.toLowerCase().includes(cleanQuote);
+            const inRedacted = redaction.redactedText.toLowerCase().includes(cleanQuote);
+            if (inOriginal || inRedacted) {
+              validTactics.push({
+                id: `t-gemini-${Date.now()}-${validTactics.length}`,
+                name: t.name,
+                category: (t.category as any) || 'urgency',
+                timestamp: 'Live',
+                confidence: 0.95,
+                severity: (t.severity as any) || 'high',
+                quote: t.quote,
+                description: t.description
+              });
+            }
           }
         }
-      });
 
-      const parsed = JSON.parse(response.text || '{}');
-      
-      // Server-side validation: Drop any tactic quote that is NOT a verbatim substring of original or redacted transcript
-      const validTactics: DetectedTactic[] = [];
-      if (Array.isArray(parsed.tactics)) {
-        for (const t of parsed.tactics) {
-          if (!t.quote) continue;
-          const cleanQuote = t.quote.trim().toLowerCase();
-          const inOriginal = text.toLowerCase().includes(cleanQuote);
-          const inRedacted = redaction.redactedText.toLowerCase().includes(cleanQuote);
-          if (inOriginal || inRedacted) {
-            validTactics.push({
-              id: `t-gemini-${Date.now()}-${validTactics.length}`,
-              name: t.name,
-              category: (t.category as any) || 'urgency',
-              timestamp: 'Live',
-              confidence: 0.95,
-              severity: (t.severity as any) || 'high',
-              quote: t.quote,
-              description: t.description
-            });
+        // Hybrid combination: merge verified Gemini tactics with verified rule matches
+        const combinedTacticsMap = new Map<string, DetectedTactic>();
+        validTactics.forEach(t => combinedTacticsMap.set(t.name.toLowerCase(), t));
+        heuristicResult.tactics.forEach(t => {
+          if (!combinedTacticsMap.has(t.name.toLowerCase())) {
+            combinedTacticsMap.set(t.name.toLowerCase(), t);
+          }
+        });
+        const finalTactics = Array.from(combinedTacticsMap.values());
+
+        // Hybrid risk score calculation
+        let blendedScore = Math.max(parsed.riskScore ?? 0, heuristicResult.riskScore);
+        
+        // Enforce family allowlist safety cap
+        if (isFamily || (callerLabel && /daughter|son|ananya|rahul|mom|dad|mother|father/i.test(callerLabel))) {
+          const hasDigitalArrest = finalTactics.some(t => t.category === 'digital_arrest');
+          if (!hasDigitalArrest) {
+            blendedScore = Math.min(blendedScore, 18);
           }
         }
+
+        const clampedScore = Math.min(100, Math.max(0, blendedScore));
+        const riskLevel = clampedScore >= 65 ? 'high-risk' : clampedScore >= 30 ? 'suspicious' : 'safe';
+        const latencyMs = Date.now() - startTime;
+
+        const result = {
+          riskScore: clampedScore,
+          riskLevel,
+          tactics: finalTactics,
+          summary: parsed.summary || heuristicResult.summary,
+          benignSignals: parsed.benignSignals || heuristicResult.benignSignals,
+          engine: 'gemini',
+          latencyMs,
+          wasRedacted,
+          redactedCount: redaction.redactedCount,
+          redactedTypes: redaction.redactedTypes
+        };
+
+        broadcastEvent({ type: 'CALL_ANALYSIS', payload: result, code: pairingCode });
+        return res.json(result);
+      } catch (err: any) {
+        const statusCode = err?.status || err?.code || 500;
+        console.info(`[Kaaval AI] Model ${candidateModel} unavailable (status ${statusCode}), trying next fallback...`);
       }
-
-      // Hybrid combination: merge verified Gemini tactics with verified rule matches
-      const combinedTacticsMap = new Map<string, DetectedTactic>();
-      validTactics.forEach(t => combinedTacticsMap.set(t.name.toLowerCase(), t));
-      heuristicResult.tactics.forEach(t => {
-        if (!combinedTacticsMap.has(t.name.toLowerCase())) {
-          combinedTacticsMap.set(t.name.toLowerCase(), t);
-        }
-      });
-      const finalTactics = Array.from(combinedTacticsMap.values());
-
-      // Hybrid risk score calculation
-      let blendedScore = Math.max(parsed.riskScore ?? 0, heuristicResult.riskScore);
-      
-      // Enforce family allowlist safety cap
-      if (isFamily || (callerLabel && /daughter|son|ananya|rahul|mom|dad|mother|father/i.test(callerLabel))) {
-        const hasDigitalArrest = finalTactics.some(t => t.category === 'digital_arrest');
-        if (!hasDigitalArrest) {
-          blendedScore = Math.min(blendedScore, 18);
-        }
-      }
-
-      const clampedScore = Math.min(100, Math.max(0, blendedScore));
-      const riskLevel = clampedScore >= 65 ? 'high-risk' : clampedScore >= 30 ? 'suspicious' : 'safe';
-      const latencyMs = Date.now() - startTime;
-
-      const result = {
-        riskScore: clampedScore,
-        riskLevel,
-        tactics: finalTactics,
-        summary: parsed.summary || heuristicResult.summary,
-        benignSignals: parsed.benignSignals || heuristicResult.benignSignals,
-        engine: 'gemini',
-        latencyMs,
-        wasRedacted,
-        redactedCount: redaction.redactedCount,
-        redactedTypes: redaction.redactedTypes
-      };
-
-      broadcastEvent({ type: 'CALL_ANALYSIS', payload: result, code: pairingCode });
-      return res.json(result);
-    } catch (e) {
-      console.warn('Gemini inference error, falling back to heuristic engine:', e);
     }
   }
 

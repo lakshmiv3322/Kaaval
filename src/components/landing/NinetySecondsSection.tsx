@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'motion/react';
 import { PhoneMockup } from './PhoneMockup';
 import { Shield, Users, Radio, AlertOctagon, CheckCircle2, PhoneCall } from 'lucide-react';
@@ -107,8 +107,10 @@ export const NinetySecondsSection: React.FC = () => {
                   {st.description}
                 </p>
               </div>
-              <div className="md:col-span-5 flex justify-center">
-                <PhoneMockup manualStep={idx + 1} staticAlert isHeroLoop={false} className="scale-90" />
+              <div className="md:col-span-5 flex justify-center items-start h-[558px]">
+                <div className="scale-90 origin-top">
+                  <PhoneMockup manualStep={idx + 1} staticAlert isHeroLoop={false} />
+                </div>
               </div>
             </div>
           ))}
@@ -117,7 +119,7 @@ export const NinetySecondsSection: React.FC = () => {
     );
   }
 
-  // Scroll-driven sticky stage (400vh on desktop, 300vh on mobile)
+  // Scroll-driven sticky stage (400vh on desktop, 280vh on tablet, 220vh on mobile)
   const isRedStage = activeStep === 3;
   const isBridgeStage = activeStep === 4;
 
@@ -125,7 +127,7 @@ export const NinetySecondsSection: React.FC = () => {
     <div
       id="how-it-works"
       ref={containerRef}
-      className="relative h-[300vh] lg:h-[400vh]"
+      className="relative h-[220vh] sm:h-[280vh] lg:h-[400vh]"
     >
       {/* Sticky Stage Viewport */}
       <div
@@ -208,21 +210,25 @@ export const NinetySecondsSection: React.FC = () => {
           </div>
 
           {/* Right Column: Phone(s) Display */}
-          <div className="lg:col-span-5 flex justify-center items-center relative min-h-[500px]">
+          <div className="lg:col-span-5 flex justify-center items-center relative">
             {/* Primary Elder Phone */}
-            <motion.div
-              animate={{
-                x: isBridgeStage ? -40 : 0,
-                scale: isBridgeStage ? 0.9 : 1,
-              }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="relative z-10 scale-[0.8] sm:scale-95 origin-center transition-transform"
-            >
-              <PhoneMockup
-                manualStep={activeStep + 1}
-                isHeroLoop={false}
-              />
-            </motion.div>
+            <div className="h-[496px] sm:h-[589px] flex justify-center items-start">
+              <motion.div
+                animate={{
+                  x: isBridgeStage ? -40 : 0,
+                  scale: isBridgeStage ? 0.9 : 1,
+                }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="relative z-10 h-[496px] sm:h-[589px] flex justify-center items-start"
+              >
+                <div className="scale-[0.8] origin-top sm:scale-95 transition-transform">
+                  <PhoneMockup
+                    manualStep={activeStep + 1}
+                    isHeroLoop={false}
+                  />
+                </div>
+              </motion.div>
+            </div>
 
             {/* Step 5: Second Phone (Family member Rahul) slides in */}
             <AnimatePresence>
