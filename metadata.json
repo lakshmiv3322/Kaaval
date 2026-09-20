@@ -1,0 +1,6 @@
+{
+  "name": "Kaaval – Scam Call Shield",
+  "description": "Real-time 'Digital Arrest' scam call shield for elderly parents with live tactical warning, regional language alerts, family one-tap barge-in, and post-call evidence pack.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
