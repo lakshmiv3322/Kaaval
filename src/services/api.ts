@@ -1,5 +1,8 @@
-import { CallSession, DetectedTactic, FamilyAlert, TranscriptChunk } from '../types';
+import { CallSession, DetectedTactic, FamilyAlert, TranscriptChunk, AnalysisResult } from '../types';
 import { INITIAL_RECENT_CALLS, SCENARIO_PRESETS } from './scamScenarios';
+import { runHeuristics } from './detector';
+import { redactSensitiveData } from './redaction';
+import { syncBus } from './syncChannel';
 
 const STORAGE_CALLS_KEY = 'kaaval_calls_history';
 const STORAGE_CURRENT_CALL_KEY = 'kaaval_current_call';
@@ -9,7 +12,6 @@ export const getStoredCalls = (): CallSession[] => {
   try {
     const raw = localStorage.getItem(STORAGE_CALLS_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_CALLS_KEY, JSON.stringify(INITIAL_RECENT_CALLS));
       return INITIAL_RECENT_CALLS;
     }
     return JSON.parse(raw);
@@ -50,15 +52,6 @@ export const saveCurrentActiveCall = (call: CallSession | null) => {
   }
 };
 
-// REST API calls matching the requested specification:
-// POST /demo/call/start
-// POST /demo/call/transcript
-// POST /demo/call/analyze
-// POST /demo/alert
-// GET /demo/calls
-// GET /demo/calls/:id
-// POST /demo/feedback
-
 export const api = {
   async startCall(scenarioId: string): Promise<CallSession> {
     const scenario = SCENARIO_PRESETS.find((s) => s.id === scenarioId) || SCENARIO_PRESETS[0];
@@ -69,10 +62,10 @@ export const api = {
       elderName: 'Kavitha Ramaswamy (Mother)',
       elderPhone: '+91 94441 90212',
       preferredLanguage: scenario.language,
-      startTime: 'Just now',
+      startTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       durationSeconds: 0,
       status: 'in-progress',
-      riskScore: 10,
+      riskScore: 5,
       riskLevel: 'safe',
       detectedTactics: [],
       transcript: [],
@@ -86,7 +79,11 @@ export const api = {
       const res = await fetch('/api/demo/call/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenarioId, session: newCall }),
+        body: JSON.stringify({
+          scenarioId,
+          session: newCall,
+          pairingCode: syncBus.getPairingCode()
+        }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -106,7 +103,11 @@ export const api = {
       const res = await fetch('/api/demo/call/transcript', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ callId, chunk }),
+        body: JSON.stringify({
+          callId,
+          chunk,
+          pairingCode: syncBus.getPairingCode()
+        }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -129,72 +130,48 @@ export const api = {
     return null;
   },
 
-  async analyzeCall(callId: string, transcriptText: string): Promise<{ tactics: DetectedTactic[]; riskScore: number; riskLevel: string }> {
+  async analyzeCall(params: {
+    callId?: string;
+    transcriptText: string;
+    callerNumber?: string;
+    callerLabel?: string;
+    isFamily?: boolean;
+    previousRiskScore?: number;
+  }): Promise<AnalysisResult> {
+    const startTime = Date.now();
     try {
       const res = await fetch('/api/demo/call/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ callId, transcriptText }),
+        body: JSON.stringify({
+          ...params,
+          pairingCode: syncBus.getPairingCode()
+        }),
       });
       if (res.ok) {
-        return await res.json();
+        const data = await res.json();
+        return data;
       }
     } catch (e) {
-      // Fallback
+      // Offline fallback to client heuristics
     }
 
-    // Heuristic analysis if offline
-    const lower = transcriptText.toLowerCase();
-    const tactics: DetectedTactic[] = [];
-    let risk = 12;
+    // Client-side offline heuristic fallback
+    const heuristic = runHeuristics({
+      transcriptText: params.transcriptText,
+      callerNumber: params.callerNumber,
+      callerLabel: params.callerLabel,
+      isFamily: params.isFamily,
+      previousRiskScore: params.previousRiskScore
+    });
 
-    if (lower.includes('police') || lower.includes('cbi') || lower.includes('customs') || lower.includes('inspector')) {
-      tactics.push({
-        id: 't-auth',
-        name: 'Authority Claim',
-        category: 'authority',
-        timestamp: 'Live',
-        confidence: 0.95,
-        severity: 'medium',
-        quote: 'Law enforcement / investigation authority claim',
-        description: 'Impersonating law enforcement officer',
-      });
-      risk += 35;
-    }
+    const redaction = redactSensitiveData(params.transcriptText);
 
-    if (lower.includes('arrest') || lower.includes('warrant') || lower.includes('video call') || lower.includes('skype')) {
-      tactics.push({
-        id: 't-arr',
-        name: 'Digital Arrest Threat',
-        category: 'digital_arrest',
-        timestamp: 'Live',
-        confidence: 0.98,
-        severity: 'high',
-        quote: 'Coerced video surveillance and arrest threat',
-        description: 'Coercing the elder to stay on video line',
-      });
-      risk += 40;
-    }
-
-    if (lower.includes('otp') || lower.includes('transfer') || lower.includes('escrow') || lower.includes('bank') || lower.includes('secret')) {
-      tactics.push({
-        id: 't-sec',
-        name: 'Financial Secrecy / OTP Demand',
-        category: 'secrecy',
-        timestamp: 'Live',
-        confidence: 0.99,
-        severity: 'high',
-        quote: 'Demand for OTP / financial credentials',
-        description: 'Direct pressure for money transfer or credentials',
-      });
-      risk += 35;
-    }
-
-    const clampedRisk = Math.min(100, risk);
     return {
-      tactics,
-      riskScore: clampedRisk,
-      riskLevel: clampedRisk > 65 ? 'high-risk' : clampedRisk > 30 ? 'suspicious' : 'safe',
+      ...heuristic,
+      latencyMs: Date.now() - startTime,
+      engine: 'heuristics',
+      wasRedacted: redaction.redactedCount > 0,
     };
   },
 
@@ -203,7 +180,10 @@ export const api = {
       await fetch('/api/demo/alert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(alert),
+        body: JSON.stringify({
+          ...alert,
+          pairingCode: syncBus.getPairingCode()
+        }),
       });
     } catch (e) {
       // ok
@@ -211,12 +191,34 @@ export const api = {
     return true;
   },
 
+  async triggerBargeIn(params: { callId: string; familyPhone?: string; elderPhone?: string }): Promise<any> {
+    try {
+      const res = await fetch('/api/demo/bargein', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params),
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // offline simulation
+    }
+    return {
+      success: true,
+      mode: 'simulation',
+      message: 'Simulation: Triggered 3-way conference bridge'
+    };
+  },
+
   async getCalls(): Promise<CallSession[]> {
     try {
       const res = await fetch('/api/demo/calls');
       if (res.ok) {
         const data = await res.json();
-        return data.calls;
+        if (Array.isArray(data.calls) && data.calls.length > 0) {
+          return data.calls;
+        }
       }
     } catch (e) {
       // offline fallback
@@ -229,7 +231,7 @@ export const api = {
       const res = await fetch(`/api/demo/calls/${callId}`);
       if (res.ok) {
         const data = await res.json();
-        return data.call;
+        if (data.call) return data.call;
       }
     } catch (e) {
       // fallback
@@ -237,7 +239,7 @@ export const api = {
     const calls = getStoredCalls();
     const active = getCurrentActiveCall();
     if (active && active.id === callId) return active;
-    return calls.find((c) => c.id === callId) || calls[0] || null;
+    return calls.find((c) => c.id === callId) || null;
   },
 
   async sendFeedback(callId: string, feedback: 'scam' | 'safe' | 'unsure'): Promise<boolean> {
@@ -255,4 +257,12 @@ export const api = {
     saveStoredCalls(updated);
     return true;
   },
+
+  async resetAll(): Promise<void> {
+    try {
+      await fetch('/api/demo/reset', { method: 'POST' });
+    } catch (_e) {}
+    saveStoredCalls([]);
+    saveCurrentActiveCall(null);
+  }
 };

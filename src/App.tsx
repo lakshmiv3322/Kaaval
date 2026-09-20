@@ -6,6 +6,10 @@ import { ElderScreen } from './pages/ElderScreen';
 import { FamilyDashboard } from './pages/FamilyDashboard';
 import { EvidencePackPage } from './pages/EvidencePackPage';
 import { SplitDemoView } from './pages/SplitDemoView';
+import { EvalResultsPage } from './pages/EvalResultsPage';
+import { HowItDeploysPage } from './pages/HowItDeploysPage';
+import { PrivacyPage } from './pages/PrivacyPage';
+import { JudgeBenchPage } from './pages/JudgeBenchPage';
 import { syncBus } from './services/syncChannel';
 
 export default function App() {
@@ -70,6 +74,18 @@ export default function App() {
     }
     if (currentRoute === '/demo/split') {
       return <SplitDemoView onNavigate={navigate} />;
+    }
+    if (currentRoute === '/demo/eval') {
+      return <EvalResultsPage onNavigate={navigate} />;
+    }
+    if (currentRoute === '/how-it-deploys') {
+      return <HowItDeploysPage onNavigate={navigate} />;
+    }
+    if (currentRoute === '/privacy') {
+      return <PrivacyPage onNavigate={navigate} />;
+    }
+    if (currentRoute === '/demo/judge') {
+      return <JudgeBenchPage onNavigate={navigate} />;
     }
     return <LandingPage onNavigate={navigate} />;
   };

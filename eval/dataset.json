@@ -1,0 +1,964 @@
+[
+  {
+    "id": "eval-001",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "Hello, this is Inspector Rathore from Mumbai Police Cyber Crime Cell.",
+      "Hello? What is this regarding officer?",
+      "Your Aadhaar number was found tied to 14 illegal bank accounts involved in international money laundering.",
+      "Oh God, but I haven't opened any accounts in Mumbai! I live in Chennai.",
+      "Under Supreme Court order you are placed under Digital Arrest right now. Do not disconnect or leave your room.",
+      "Please officer, what should I do? My daughter is at work.",
+      "Do not speak to your daughter. Download Skype immediately for video surveillance."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-002",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "வணக்கம், நான் டெல்லி காவல்துறையின் குற்றப்பிரிவு தலைமை ஆய்வாளர் பேசுகிறேன்.",
+      "சார், என்ன விஷயம் சார்? நான் வயதானவள்.",
+      "உங்கள் பெயரில் வந்த பார்சலில் போதைப்பொருள் மற்றும் போலி பாஸ்போர்ட் பறிமுதல் செய்யப்பட்டுள்ளது.",
+      "ஐயோ, எனக்கும் அதற்கும் எந்த சம்பந்தமும் இல்லைங்க சார்.",
+      "நீதிமன்ற உத்தரவின்படி நீங்கள் இப்போது டிஜிட்டல் கைது செய்யப்படுகிறீர்கள். அறையை விட்டு வெளியேறாதீர்கள்.",
+      "என் மகனுக்கு போன் செய்து சொல்லட்டுமா சார்?",
+      "யாருக்கும் சொல்லக்கூடாது! உடனடியாக வீடியோ காலில் வந்து உங்கள் வங்கி விபரங்களை சொல்லுங்கள்."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-003",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "नमस्ते, मैं सीबीआई हेडक्वार्टर नई दिल्ली से इंस्पेक्टर शर्मा बोल रहा हूँ।",
+      "जी सर, क्या बात है?",
+      "आपके खिलाफ गैर-जमानती गिरफ्तारी वारंट जारी हुआ है मनी लॉन्ड्रिंग केस में।",
+      "सर मैंने तो कभी कुछ गलत नहीं किया, मैं 70 साल का बुजुर्ग हूँ।",
+      "सुप्रीम कोर्ट के निर्देशानुसार आप डिजिटल अरेस्ट में हैं। कैमरा बंद मत करना और कमरे से बाहर मत जाना।",
+      "मैं अपने बेटे को फोन कर लूँ?",
+      "परिवार में किसी को मत बताना। आरबीआई सत्यापन के लिए पैसे ट्रांसफर करने होंगे।"
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-004",
+    "language": "tanglish",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "Hello maam, Mumbai Police station la irundhu Cyber Cell officer pesuren.",
+      "Enna vishayam thambi?",
+      "Ungaloda phone number use panni illegal transaction nadanthurukku. Arrest warrant ready.",
+      "Aiyyo, naan enna pannen?",
+      "Neenga digital arrest la irukkeenga. Room vittu veliya pogathinga, Skype la video call on pannunga.",
+      "En paiyan kitta solren thambi.",
+      "Yarukittayum sollathinga! Confidental case. Penalty amount transfer pannanum."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-005",
+    "language": "en",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "Good morning, FedEx Mumbai customs clearance hub calling.",
+      "Yes, but I didn't send any package.",
+      "A parcel sent in your name to Taiwan contains 200 grams of MDMA synthetic drugs and 5 fake passports.",
+      "This must be a mistake! I haven't sent any courier.",
+      "The Narcotics Control Bureau has registered an FIR under Section 420. Connecting to police line now.",
+      "Please don't arrest me, I am an innocent pensioner.",
+      "To unfreeze your name, deposit 1,50,000 rupees to the RBI verification escrow account immediately."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-006",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "வணக்கம், சுங்கத்துறை மற்றும் ஃபெடெக்ஸ் கொரியர் அலுவலகம்.",
+      "சொல்லுங்க, என்னோட பார்சலா?",
+      "உங்கள் பெயரில் தைவான் நாட்டுக்கு அனுப்பப்பட்ட பார்சலில் சட்டவிரோத போதைப்பொருள் பிடிபட்டுள்ளது.",
+      "நான் பார்சல் எதுவும் அனுப்பவில்லையே.",
+      "உங்கள் மீது கைது வாரண்ட் பிறப்பிக்கப்பட்டுள்ளது. உடனடியாக பணம் செலுத்தி வழக்கை ரத்து செய்யுங்கள்.",
+      "என் பென்ஷன் பணத்தை எடுக்க வேண்டுமா?",
+      "ஆம், உடனடி பாதுகாப்பு வைப்புத்தொகை செலுத்த வேண்டும். ஓடிபி சொல்லுங்கள்."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-007",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "नमस्कार, डीएचएल पार्सल सर्विस मुंबई इंटरनेशनल एयरपोर्ट से।",
+      "हाँ, क्या बात है?",
+      "आपके आधार नंबर से बुक पार्सल में गैरकानूनी प्रतिबंधित दवाएं पकड़ी गई हैं।",
+      "अरे राम, मैंने कोई पार्सल नहीं भेजा!",
+      "नारकोटिक्स ब्यूरो द्वारा तुरंत गिरफ्तारी वारंट भेजा गया है।",
+      "सर मुझे बचाइए, मैं क्या करूँ?",
+      "क्लियरेंस के लिए अभी एस्क्रो अकाउंट में सुरक्षा निधि ट्रांसफर करो।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-008",
+    "language": "en",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "Dear consumer, this is State Electricity Board power dispatch officer.",
+      "Yes sir, why are you calling?",
+      "Your previous month electricity bill remains unpaid. Power will be disconnected tonight at 9:30 PM.",
+      "But I paid via check at the counter last Tuesday!",
+      "The update failed. Call cut pannathinga, install AnyDesk app immediately to update bill.",
+      "I don't know how to use these apps.",
+      "Share your bank OTP right now or your whole house will be in total darkness."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-009",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "மின்சார வாரிய தலைமை அலுவலகத்திலிருந்து பேசுகிறோம்.",
+      "சொல்லுங்க தம்பி, என்ன ஆச்சு?",
+      "உங்கள் மின் கட்டணம் நிலுவையில் உள்ளது. இன்று இரவு மின் இணைப்பு துண்டிக்கப்படும்.",
+      "நான் நேத்துதான் பில் கட்டினேனே!",
+      "பில் அப்டேட் ஆகவில்லை. உடனே லிங்க்கை கிளிக் செய்து ஓடிபி சொல்லுங்க இல்லேன்னா பவர் கட் ஆகும்.",
+      "என் பையன் வரட்டும், அவன் கிட்ட சொல்றேன்.",
+      "பையன் வர வரைக்கும் வெயிட் பண்ண முடியாது! இப்போவே ஓடிபி கொடுங்க."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-010",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "बिजली विभाग अधिकारी बोल रहा हूँ।",
+      "जी सर, क्या परेशानी है?",
+      "आपका बिजली का बिल बकाया है, आज रात 9 बजे आपकी लाइन काट दी जाएगी।",
+      "पर मैंने तो पिछले हफ्ते ही जमा किया था।",
+      "सिस्टम में अपडेट नहीं हुआ है। तुरंत इस नंबर पर पैसे भेजो और ओटीपी बताओ वर्ना बत्ती गुल हो जाएगी।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-011",
+    "language": "en",
+    "isScam": true,
+    "scamType": "kyc_fraud",
+    "utterances": [
+      "State Bank of India customer verification desk here.",
+      "Hello SBI, yes?",
+      "Your bank account and ATM card will be permanently blocked in 2 hours due to unlinked KYC.",
+      "Oh, how can I link it? I have trouble walking to the branch.",
+      "We will do online biometric KYC right now. Tell me your 16 digit card number and CVV.",
+      "Is that safe to share over phone?",
+      "If you do not share, your pension account will be frozen by RBI order. Share the OTP now."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 6
+  },
+  {
+    "id": "eval-012",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "kyc_fraud",
+    "utterances": [
+      "ஸ்டேட் பாங்க் ஆப் இந்தியா மேலாளர் பேசுகிறேன்.",
+      "சொல்லுங்க சார்.",
+      "உங்கள் ஆதார் கார்டு பேங்க் அக்கவுண்ட்டுடன் இணைக்கப்படவில்லை, அக்கவுண்ட் லாக் ஆகப்போகிறது.",
+      "நான் பேங்குக்கு வரட்டுமா?",
+      "பேங்குக்கு வர தேவையில்லை. உங்கள் மொபைலுக்கு வந்த ஓடிபி எண்ணை சொல்லுங்கள்.",
+      "ஓடிபி சொல்லலாமா சார்?",
+      "உடனடியாக ஓடிபி சொல்லாவிட்டால் பென்ஷன் பணம் முடக்கப்படும்."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 6
+  },
+  {
+    "id": "eval-013",
+    "language": "en",
+    "isScam": true,
+    "scamType": "relative_distress",
+    "utterances": [
+      "Hello Uncle! I am Sub-Inspector Deshmukh from Bandra Police Station.",
+      "Yes officer, what happened?",
+      "Your son Rahul has met with an accident and is involved in a hit and run case.",
+      "My god! Is Rahul safe? Please let me speak to him!",
+      "He is under police custody. The other victim is critical in ICU.",
+      "Please help my son, what should I do?",
+      "The victim's family agreed to settle outside court. Transfer 75,000 rupees right now or your son goes to jail."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 6
+  },
+  {
+    "id": "eval-014",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "relative_distress",
+    "utterances": [
+      "अंकल जी, मैं आपके बेटे रोहन के दोस्त का चाचा बोल रहा हूँ पुलिस थाने से।",
+      "रोहन ठीक है ना? क्या हुआ उसे?",
+      "रोहन को पुलिस ने ड्रग्स केस में हिरासत में ले लिया है।",
+      "हे भगवान! रोहन ऐसा नहीं कर सकता।",
+      "अगर अभी बेल के लिए 50,000 रुपये जमा नहीं किए तो एफआईआर दर्ज हो जाएगी और वो जेल चला जाएगा।",
+      "मैं अभी बैंक जाता हूँ।",
+      "बैंक जाने का समय नहीं है, तुरंत यूपीआई करो वर्ना मामला कोर्ट चला जाएगा।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-015",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "This is Cyber Crime Cell headquarters. We have identified money laundering from your IP.",
+      "Sir, I only watch devotional videos on YouTube!",
+      "Section 420 and illegal transactions warrant has been sanctioned against you.",
+      "I am an 80 year old retired teacher.",
+      "Stay in the room and turn on your video call immediately. You are under digital custody."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-016",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "மத்திய குற்றப்பிரிவு ஆய்வாளர் பேசுகிறேன். உங்கள் வங்கி கணக்கில் சட்டவிரோத பணம் வந்துள்ளது.",
+      "ஐயா நான் சாதாரண குடும்பத்தலைவி.",
+      "கைது வாரண்ட் பிறப்பிக்கப்பட்டுள்ளது. டிஜிட்டல் கைது செய்கிறோம்.",
+      "என்ன செய்ய வேண்டும் ஐயா?",
+      "வீடியோ கால் ஆன் செய்து ரூமிலேயே இருங்கள். யாருக்கும் தகவல் சொல்லக்கூடாது."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-017",
+    "language": "en",
+    "isScam": true,
+    "scamType": "customs_extortion",
+    "utterances": [
+      "Customs department Delhi Indira Gandhi Airport calling.",
+      "Yes?",
+      "Your consignment of international goods has been intercepted with undeclared foreign currency.",
+      "I didn't order any foreign goods.",
+      "Failure to pay the customs penalty fee of 45,000 will result in immediate non-bailable warrant."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-018",
+    "language": "hinglish",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "Sir police bol rahe hain cyber cell se.",
+      "Haan boliye sir?",
+      "Aapke naam pe FIR darj ho gayi hai. Non bailable warrant nikla hai.",
+      "Kyun sir? Maine kya kiya?",
+      "Digital arrest me ho aap. Room se bahar mat niklo aur video call on rakho.",
+      "Kisi ko mat bolna secret case hai."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-019",
+    "language": "en",
+    "isScam": true,
+    "scamType": "adversarial_polite_scam",
+    "utterances": [
+      "Respected madam, warm greetings from the central regulatory compliance cell.",
+      "Good afternoon, how can I assist you?",
+      "We humbly request your cooperation as an irregularity in Section 420 audit was flagged.",
+      "Oh dear, is it serious?",
+      "Kindly remain seated in your private study and join our Skype video line for mandatory identity clearance.",
+      "Can I ask my son first?",
+      "To preserve utmost confidentiality, please do not inform any third party or family members."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-020",
+    "language": "en",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "BlueDart Courier Mumbai security screening team.",
+      "Yes?",
+      "Your international parcel contains illicit narcotics drugs.",
+      "What nonsense! I am 75 years old.",
+      "CBI Cyber cell inspector will take you into digital custody right now unless verified."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-021",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "relative_distress",
+    "utterances": [
+      "அம்மா, உங்கள் மகன் ராகுலின் அலுவலகத்திலிருந்து பேசுகிறோம்.",
+      "சொல்லுங்க, என் பையனுக்கு என்னாச்சு?",
+      "அவர் போலீஸ் ஸ்டேஷனில் உள்ளார், பெரிய விபத்து ஏற்பட்டுவிட்டது.",
+      "கடவுளே, நான் உடனே வருகிறேன்.",
+      "இல்லை, இப்போதே மருத்துவமனை கணக்கிற்கு 40,000 ரூபாய் அனுப்பினால் விடுவிப்பார்கள்."
+    ],
+    "goldTactics": ["urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-022",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "customs_extortion",
+    "utterances": [
+      "कस्टम्स विभाग से वरिष्ठ अधिकारी बोल रहा हूँ।",
+      "जी सर।",
+      "आपके नाम का पार्सल एयरपोर्ट पर जब्त हुआ है जिसमें ड्रग्स पाए गए हैं।",
+      "मैंने कोई पार्सल नहीं मंगाया।",
+      "गिरफ्तारी से बचना है तो तुरंत क्लियरेंस पेनल्टी भेजो और किसी को मत बताना।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-023",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "Supreme court vigilance unit calling regarding case 849/2026.",
+      "Yes officer?",
+      "You are facing non-bailable arrest for terror funding evasion.",
+      "I am completely innocent!",
+      "You are placed in digital arrest. Keep the video camera on 24 hours until verification."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-024",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "தமிழ்நாடு மின்சார வாரியம் உடனடி அறிவிப்பு.",
+      "சொல்லுங்க ஐயா.",
+      "பில் கட்டாததால் இன்று இரவு மின்சாரம் துண்டிக்கப்படும்.",
+      "நேற்று கட்டினேனே!",
+      "கட்டணம் சேரவில்லை, உடனே ஓடிபி சொல்லுங்கள் அல்லது பணத்தை டிரான்ஸ்பர் செய்யுங்கள்."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-025",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "kyc_fraud",
+    "utterances": [
+      "पंजाब नेशनल बैंक शाखा प्रबंधक बोल रहा हूँ।",
+      "जी क्या बात है?",
+      "आपका खाता तुरंत बंद हो रहा है क्योंकि पैन कार्ड लिंक नहीं है।",
+      "मैं कल बैंक आ जाऊं?",
+      "कल तक खाता फ्रीज हो जाएगा। अभी फोन पर ओटीपी साझा करें।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-026",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "CBI Special Task Force Inspector Khan.",
+      "What is this call about?",
+      "Money laundering act FIR registered against your name.",
+      "I have never been to Mumbai.",
+      "Stay in your room. Under digital arrest commands you cannot talk to family or disconnect."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-027",
+    "language": "tanglish",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "FedEx parcel department la irundhu pesurom.",
+      "Enna vishayam?",
+      "Parcel la drugs irukku nu police case file aagirukku.",
+      "Enakku theriyaathu sir.",
+      "Jail la poduvom, உடனே rbi escrow ku anupunga escape aagalam."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-028",
+    "language": "en",
+    "isScam": true,
+    "scamType": "customs_extortion",
+    "utterances": [
+      "Narcotics Control Bureau customs intelligence.",
+      "Yes?",
+      "Consignment intercepted with synthetic drugs.",
+      "This is shocking!",
+      "Pay the verification deposit to clear your name or police will raid your house."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-029",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "क्राइम ब्रांच साइबर सेल से डीसीपी बोल रहा हूँ।",
+      "प्रणाम सर, क्या बात है?",
+      "आपके खिलाफ गैर-जमानती वारंट है।",
+      "सर मैं निर्दोष हूँ।",
+      "डिजिटल अरेस्ट आदेश लागू है। कमरे से बाहर मत जाना और फोन मत काटना।"
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-030",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "மும்பை காவல்துறை தலைமை அலுவலகம்.",
+      "வணக்கம் ஐயா.",
+      "உங்கள் பெயரில் பணமோசடி புகார் பதிவாகியுள்ளது.",
+      "நான் எதுவும் செய்யவில்லைங்க.",
+      "டிஜிட்டல் கைது உத்தரவு. அறையிலேயே இருங்கள், யாருக்கும் சொல்லாதீர்கள்."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 4
+  },
+  {
+    "id": "eval-031",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "Hi Amma! How are you feeling today?",
+      "Hi Ananya kanna, I am doing fine. Just finished my tea.",
+      "Did you take your morning blood pressure medicine?",
+      "Yes, right after breakfast like the doctor said.",
+      "Great. I will transfer 5,000 rupees to your bank account for monthly groceries this evening.",
+      "Thank you kanna, that will be very helpful.",
+      "I will bring fresh mango kulfi when I come home this weekend! Love you Amma."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-032",
+    "language": "ta",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "அம்மா, எப்படி இருக்கீங்க? உடம்பு பரவாயில்லையா?",
+      "நல்லா இருக்கேன் மா, நீ எப்படி இருக்க?",
+      "சாயங்காலம் மாத்திரை சாப்பிட்டீர்களா?",
+      "ஆமாம், சாப்பிட்டுவிட்டேன்.",
+      "உங்கள் கணக்கிற்கு இரண்டாயிரம் ரூபாய் அனுப்பியுள்ளேன், மளிகை சாமான்கள் வாங்கிக்கொள்ளுங்கள்.",
+      "சரிம்மா, ரொம்ப நன்றி.",
+      "வீட்டுக்கு வருகிறேன் அம்மா, டின்னர் சேர்ந்து சாப்பிடலாம்."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-033",
+    "language": "hi",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "नमस्ते माँ, कैसी हो आप?",
+      "बेटा मैं ठीक हूँ, तुम बताओ काम कैसा चल रहा है?",
+      "सब बढ़िया है माँ। आपने दोपहर की दवाई ली?",
+      "हाँ बेटा, समय पर ले ली थी।",
+      "मैंने आपके बैंक खाते में पैसे भेज दिए हैं दवाई और फल लाने के लिए।",
+      "जीते रहो बेटा, शाम को कब आओगे?",
+      "शाम 7 बजे तक घर आ रहा हूँ माँ, गरमा-गरम चाय पिएंगे।"
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-034",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_bank_warning",
+    "utterances": [
+      "Good afternoon sir, this is an automated advisory from HDFC Bank Security Desk.",
+      "Yes, is my account safe?",
+      "We want to remind all customers that bank never asks for OTP or passwords. Never share OTP with anyone.",
+      "Yes, I know about these scams.",
+      "Your monthly savings account statement is ready and has been delivered to your email.",
+      "Thank you for the notification.",
+      "Have a safe and pleasant day."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-035",
+    "language": "ta",
+    "isScam": false,
+    "scamType": "benign_bank_warning",
+    "utterances": [
+      "வணக்கம், கனரா வங்கியின் பாதுகாப்பு விழிப்புணர்வு அழைப்பு.",
+      "வணக்கம் சார்.",
+      "வங்கி ஒருபோதும் ஓடிபி கேட்காது என்பதை நினைவில் கொள்ளுங்கள். யாருடனும் கடவுச்சொல்லை பகிராதீர்கள்.",
+      "ஆமாம் சார், விழிப்புணர்வுடன் இருக்கிறேன்.",
+      "உங்கள் கணக்கு பாதுகாப்பாக உள்ளது. நன்றி."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-036",
+    "language": "hi",
+    "isScam": false,
+    "scamType": "benign_bank_warning",
+    "utterances": [
+      "भारतीय स्टेट बैंक ग्राहक सुरक्षा संदेश।",
+      "हाँ जी।",
+      "कृपया ध्यान दें: बैंक कभी भी आपसे ओटीपी या पासवर्ड नहीं मांगता। कभी भी ओटीपी शेयर न करें।",
+      "जी बिल्कुल, धन्यवाद बताने के लिए।"
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-037",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_delivery",
+    "utterances": [
+      "Hello maam, Amazon delivery agent here.",
+      "Yes, I am at home.",
+      "Your package has been delivered to your doorstep. Please share the 4-digit delivery PIN.",
+      "Yes, it is 4921.",
+      "Thank you maam, have a nice day!"
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-038",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_doctor",
+    "utterances": [
+      "Good morning, this is Apollo Hospital reception confirming Dr. Sundaram's appointment.",
+      "Good morning, yes for 4:30 PM today.",
+      "Please bring your previous blood test reports and cardiology ECG chart.",
+      "Yes, I have them ready in my bag.",
+      "See you at 4:30 PM, take care."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-039",
+    "language": "ta",
+    "isScam": false,
+    "scamType": "benign_doctor",
+    "utterances": [
+      "வணக்கம் அம்மா, அப்பல்லோ கிளினிக் நர்ஸ் பேசுகிறேன்.",
+      "சொல்லுங்கம்மா.",
+      "நாளை காலை 10 மணிக்கு டாக்டர் அப்பாயிண்ட்மென்ட் உள்ளது, வெறும் வயிற்றில் ரத்த பரிசோதனை செய்ய வேண்டும்.",
+      "சரிம்மா, காலை 9 மணிக்கே வந்து விடுகிறேன்.",
+      "நன்றி அம்மா, மாத்திரையை தவறாமல் எடுத்துக்கொள்ளுங்கள்."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-040",
+    "language": "en",
+    "isScam": false,
+    "scamType": "adversarial_angry_legitimate",
+    "utterances": [
+      "Hello! This is Ramesh from the Residents Welfare Association maintenance office.",
+      "Yes Ramesh, why do you sound so stressed?",
+      "The plumber has been waiting outside your gate for 45 minutes to fix the water leakage pipe!",
+      "Oh goodness, the doorbell must be broken. I am opening the gate right now.",
+      "Please open quickly, the terrace tank water is overflowing down the building wall.",
+      "Opening immediately, so sorry for the delay!"
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-041",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "Cyber crime cell officer calling. Your passport was used to register dummy SIM cards.",
+      "I have never given my passport to anyone.",
+      "Under Supreme court order you are placed under digital arrest right now. Do not disconnect."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-042",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "காவல்துறை உதவி ஆணையர் பேசுகிறேன். பணமோசடி வழக்கில் உங்கள் பெயர் உள்ளது.",
+      "நான் ஆசிரியராக பணிபுரிந்து ஓய்வு பெற்றவன்.",
+      "டிஜிட்டல் கைது செய்யப்படுகிறீர்கள். போனை கட் செய்யாதீர்கள், வீடியோ ஆன் செய்யவும்."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-043",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "सीबीआई विशेष शाखा से कॉल है। आपके बैंक खाते से हवाला लेनदेन हुआ है।",
+      "सर यह सरासर गलत आरोप है।",
+      "डिजिटल अरेस्ट लागू किया गया है। तुरंत स्काइप पर आइए।"
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-044",
+    "language": "en",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "Electricity distribution officer. Power will be cut tonight at 9:30 PM due to unpaid balance.",
+      "I have the receipt right here in my hand.",
+      "Call cut pannathinga, share your OTP now to unblock the meter."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-045",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "மின்சார துறை பவர் கட் ஆபீசர். உங்கள் கரண்ட் இன்றிரவு கட் செய்யப்படும்.",
+      "ஏன் சார்?",
+      "பில் பாக்கி. உடனடியாக பணம் அனுப்பவும், ஓடிபி சொல்லுங்கள்."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-046",
+    "language": "en",
+    "isScam": true,
+    "scamType": "kyc_fraud",
+    "utterances": [
+      "ICICI Bank security alert. Your debit card has been suspended.",
+      "How do I activate it?",
+      "Share your 16 digit card number and OTP immediately to avoid permanent closure."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-047",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "kyc_fraud",
+    "utterances": [
+      "बैंक खाता सत्यापन विभाग। आपका खाता ब्लॉक कर दिया गया है।",
+      "क्यों ब्लॉक किया?",
+      "केवाईसी नहीं हुआ। अभी ओटीपी बताओ वरना खाता बंद।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-048",
+    "language": "en",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "FedEx security. A parcel sent by you contains illegal narcotics.",
+      "I never sent any parcel!",
+      "Non-bailable warrant issued under Section 420. Transfer funds to clear your name."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-049",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "courier_narcotics",
+    "utterances": [
+      "சுங்கத்துறை அலுவலகம். உங்கள் பார்சலில் போதைப்பொருள் பிடிபட்டுள்ளது.",
+      "நான் அனுப்பவில்லை.",
+      "கைது வாரண்ட். வழக்கை முடித்து வைக்க வைப்புத்தொகை செலுத்தவும்."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-050",
+    "language": "en",
+    "isScam": true,
+    "scamType": "relative_distress",
+    "utterances": [
+      "Inspector from city hospital police outpost. Your son is in custody after fatal collision.",
+      "Oh lord! Is he hurt?",
+      "Transfer 50,000 for emergency treatment deposit right now or he will be remanded in prison."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-051",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "Dad, I have booked your train tickets for Delhi next Thursday.",
+      "Thank you son, what time does the train depart?",
+      "At 6:30 AM from Central. I will come pick you up at 5:30 AM.",
+      "Sounds good, I will pack my bags tonight."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-052",
+    "language": "ta",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "அப்பா, நாளைக்கு சாயங்காலம் வீட்டுக்கு வரேன்.",
+      "சரிப்பா, என்ன சாப்பிட பிடிக்கும்?",
+      "உங்க கையால் செய்த ரசம் சாதம் வேணும் அப்பா.",
+      "நிச்சயமாக செய்து வைக்கிறேன் மகனே."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-053",
+    "language": "hi",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "पापा, मैंने आपके लिए घुटने का ब्रेस ऑर्डर कर दिया है।",
+      "अरे वाह बेटा, कितने का आया?",
+      "आप चिंता मत करो पापा, मैंने ऑनलाइन पेमेंट कर दिया है।",
+      "बहुत शुक्रिया बेटा, ध्यान रखना अपना।"
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-054",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_bank_warning",
+    "utterances": [
+      "Kotak Mahindra bank alert: we will never ask for your otp or password. Keep your credentials private.",
+      "Noted, thank you."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-055",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_delivery",
+    "utterances": [
+      "Swiggy delivery partner reached your building gate with hot soup.",
+      "Thank you, coming downstairs to collect."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-056",
+    "language": "tanglish",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "Mumbai Crime branch police station la irundhu call.",
+      "Enna aachu sir?",
+      "Case file aagirukku, digital arrest la irukeenga. Yarukittayum sollathinga."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-057",
+    "language": "hinglish",
+    "isScam": true,
+    "scamType": "electricity_bill",
+    "utterances": [
+      "Bijli office se call hai, light kat jayegi raat ko.",
+      "Kyun bhaiya?",
+      "Bill nahi bhara. Abhi paise bhejo aur otp batao."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-058",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "CBI Cyber crime unit. Non-bailable warrant issued under Section 420.",
+      "Please explain what happened.",
+      "Placed under digital arrest. Stay in room with camera on, do not speak to your family."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-059",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "customs_extortion",
+    "utterances": [
+      "கஸ்டம்ஸ் அதிகாரி பேசுகிறேன். வெளிநாட்டு பார்சல் பறிமுதல் செய்யப்பட்டுள்ளது.",
+      "என் பார்சல் இல்லைங்க.",
+      "பணமோசடி சட்டம் பாயும். அபராதம் செலுத்த பணம் பரிமாற்றம் செய்யவும்."
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-060",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "relative_distress",
+    "utterances": [
+      "थाना प्रभारी बोल रहा हूँ। आपका बेटा गंभीर एक्सीडेंट में फंसा है।",
+      "अरे बाप रे, वो सुरक्षित है?",
+      "इलाज और बेल के लिए तुरंत 60,000 रुपये भेजो वर्ना जेल जाएगा।"
+    ],
+    "goldTactics": ["authority", "urgency", "financial"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-061",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_family",
+    "utterances": [
+      "Mom, just checking if you reached the temple safely?",
+      "Yes dear, having prasadam with Saradha aunt.",
+      "Awesome, enjoy your morning!"
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-062",
+    "language": "en",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "DCP Cyber Crime Delhi. International syndicate money laundering.",
+      "I am an old lady, I don't know syndicate.",
+      "You are in virtual custody under digital arrest. Do not disconnect line."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-063",
+    "language": "ta",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "சிபிஐ குற்றப்பிரிவு ஆய்வாளர். போலி பாஸ்போர்ட் வழக்கு.",
+      "எனக்கு எதுவும் தெரியாதுங்க.",
+      "டிஜிட்டல் கைது. அறையை விட்டு வெளியேறாதீர்கள், யாருக்கும் சொல்லாதீர்கள்."
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest", "secrecy"],
+    "firstAlertUtteranceIndex": 2
+  },
+  {
+    "id": "eval-064",
+    "language": "en",
+    "isScam": false,
+    "scamType": "benign_delivery",
+    "utterances": [
+      "Courier delivery partner outside flat 302. Package delivered to your doorstep.",
+      "Thank you, taking it inside."
+    ],
+    "goldTactics": [],
+    "firstAlertUtteranceIndex": null
+  },
+  {
+    "id": "eval-065",
+    "language": "hi",
+    "isScam": true,
+    "scamType": "digital_arrest",
+    "utterances": [
+      "सीबीआई इंस्पेक्टर। आपके नाम पर मनी लॉन्ड्रिंग केस।",
+      "मैंने कुछ नहीं किया सर।",
+      "डिजिटल अरेस्ट लागू है। कैमरा बंद मत करना।"
+    ],
+    "goldTactics": ["authority", "urgency", "digital_arrest"],
+    "firstAlertUtteranceIndex": 2
+  }
+]

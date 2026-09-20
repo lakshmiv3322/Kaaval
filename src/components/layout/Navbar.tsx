@@ -88,10 +88,53 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             For banks
           </a>
+          <button
+            type="button"
+            onClick={() => onNavigate('/how-it-deploys')}
+            className={`transition-colors min-h-[44px] inline-flex items-center px-1 text-sm font-medium ${
+              currentRoute === '/how-it-deploys' ? 'text-[#5B8FFF]' : 'text-[#9CA3AF] hover:text-white'
+            }`}
+          >
+            Deployment
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('/privacy')}
+            className={`transition-colors min-h-[44px] inline-flex items-center px-1 text-sm font-medium ${
+              currentRoute === '/privacy' ? 'text-[#5B8FFF]' : 'text-[#9CA3AF] hover:text-white'
+            }`}
+          >
+            Privacy
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('/demo/eval')}
+            className={`transition-colors min-h-[44px] inline-flex items-center px-1 text-sm font-medium ${
+              currentRoute === '/demo/eval' ? 'text-[#5B8FFF]' : 'text-[#9CA3AF] hover:text-white'
+            }`}
+          >
+            Benchmark
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('/demo/judge')}
+            className={`transition-colors min-h-[44px] inline-flex items-center px-1 text-sm font-medium ${
+              currentRoute === '/demo/judge' ? 'text-[#5B8FFF]' : 'text-[#9CA3AF] hover:text-white'
+            }`}
+          >
+            Judge Bench
+          </button>
         </nav>
 
         {/* Primary Action Button: Live Demo */}
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigate('/demo/split')}
+            className="hidden sm:inline-flex min-h-[44px] px-3 py-2 rounded-xl bg-[#161F2E] hover:bg-[#1E293B] border border-[#1E293B] text-[#E5E7EB] text-xs sm:text-sm font-medium transition-all items-center gap-2 cursor-pointer"
+          >
+            <span>Split Demo</span>
+          </button>
           <button
             type="button"
             onClick={() => onNavigate('/demo/elder')}

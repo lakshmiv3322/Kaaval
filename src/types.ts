@@ -65,7 +65,18 @@ export interface ScenarioScript {
     speaker: 'caller' | 'elder' | 'agent';
     text: string;
     translation?: string;
-    tactic?: DetectedTactic;
-    riskScore: number;
   }[];
+}
+
+export interface AnalysisResult {
+  riskScore: number;
+  riskLevel: RiskLevel;
+  tactics: DetectedTactic[];
+  summary: string;
+  benignSignals?: string[];
+  engine: 'gemini' | 'heuristics';
+  latencyMs: number;
+  wasRedacted?: boolean;
+  redactedTypes?: string[];
+  redactedCount?: number;
 }
