@@ -1,16 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { Navbar } from './components/layout/Navbar';
-import { LandingPage } from './pages/LandingPage';
-import { ElderScreen } from './pages/ElderScreen';
-import { FamilyDashboard } from './pages/FamilyDashboard';
-import { EvidencePackPage } from './pages/EvidencePackPage';
-import { SplitDemoView } from './pages/SplitDemoView';
-import { EvalResultsPage } from './pages/EvalResultsPage';
-import { HowItDeploysPage } from './pages/HowItDeploysPage';
-import { PrivacyPage } from './pages/PrivacyPage';
-import { JudgeBenchPage } from './pages/JudgeBenchPage';
 import { syncBus } from './services/syncChannel';
+
+// Code-split route components with lazy loading
+const LandingPage = lazy(() => import('./pages/LandingPage').then(m => ({ default: m.LandingPage })));
+const ElderScreen = lazy(() => import('./pages/ElderScreen').then(m => ({ default: m.ElderScreen })));
+const FamilyDashboard = lazy(() => import('./pages/FamilyDashboard').then(m => ({ default: m.FamilyDashboard })));
+const EvidencePackPage = lazy(() => import('./pages/EvidencePackPage').then(m => ({ default: m.EvidencePackPage })));
+const SplitDemoView = lazy(() => import('./pages/SplitDemoView').then(m => ({ default: m.SplitDemoView })));
+const EvalResultsPage = lazy(() => import('./pages/EvalResultsPage').then(m => ({ default: m.EvalResultsPage })));
+const HowItDeploysPage = lazy(() => import('./pages/HowItDeploysPage').then(m => ({ default: m.HowItDeploysPage })));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })));
+const JudgeBenchPage = lazy(() => import('./pages/JudgeBenchPage').then(m => ({ default: m.JudgeBenchPage })));
+
+const RouteLoadingFallback: React.FC = () => (
+  <div
+    role="status"
+    aria-live="polite"
+    className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center"
+  >
+    <div className="relative w-12 h-12 flex items-center justify-center">
+      <div className="absolute inset-0 rounded-full border-2 border-[#1E293B] animate-ping opacity-30" />
+      <div className="w-10 h-10 rounded-full border-2 border-t-[#5B8FFF] border-r-[#5B8FFF]/40 border-b-transparent border-l-transparent animate-spin" />
+    </div>
+    <p className="mt-4 text-xs font-mono text-[#9CA3AF] tracking-wider uppercase">Loading module...</p>
+  </div>
+);
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<string>(() => {
@@ -107,7 +123,9 @@ export default function App() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            {renderPage()}
+            <Suspense fallback={<RouteLoadingFallback />}>
+              {renderPage()}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </div>

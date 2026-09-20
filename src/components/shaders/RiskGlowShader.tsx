@@ -22,8 +22,15 @@ export const RiskGlowShader: React.FC<RiskGlowShaderProps> = ({
     let frameId: number;
     let angle = 0;
 
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const render = () => {
-      angle += 0.02 + (riskScore / 100) * 0.04;
+      if (!prefersReducedMotion) {
+        angle += 0.02 + (riskScore / 100) * 0.04;
+      }
       const width = canvas.width;
       const height = canvas.height;
       const cx = width / 2;
@@ -45,7 +52,7 @@ export const RiskGlowShader: React.FC<RiskGlowShaderProps> = ({
         r2 = 234; g2 = 179; b2 = 8;    // Yellow
       }
 
-      const pulse = Math.sin(angle * 2) * 0.15 + 0.85;
+      const pulse = prefersReducedMotion ? 1.0 : Math.sin(angle * 2) * 0.15 + 0.85;
       const radius = (width / 2) * 0.9 * pulse;
       const intensity = 0.25 + (riskScore / 100) * 0.55;
 
@@ -60,13 +67,15 @@ export const RiskGlowShader: React.FC<RiskGlowShaderProps> = ({
       ctx.arc(cx, cy, radius, 0, Math.PI * 2);
       ctx.fill();
 
-      frameId = requestAnimationFrame(render);
+      if (!prefersReducedMotion) {
+        frameId = requestAnimationFrame(render);
+      }
     };
 
     render();
 
     return () => {
-      cancelAnimationFrame(frameId);
+      if (frameId) cancelAnimationFrame(frameId);
     };
   }, [riskScore]);
 

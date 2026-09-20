@@ -77,6 +77,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     service: 'Kaaval Scam Call Shield',
     geminiAvailable: Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'MY_GEMINI_API_KEY'),
+    twilioAvailable: Boolean(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER),
     timestamp: new Date().toISOString()
   });
 });

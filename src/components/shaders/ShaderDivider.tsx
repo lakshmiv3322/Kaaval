@@ -15,7 +15,7 @@ export const ShaderDivider: React.FC<ShaderDividerProps> = ({
       <div className="absolute inset-0 bg-[#1E293B]/60" />
       {/* Flowing animated multi-stop gradient band */}
       <div
-        className="absolute inset-0 opacity-85"
+        className="absolute inset-0 opacity-85 animate-flow-gradient"
         style={{
           background: 'linear-gradient(90deg, transparent 0%, #ff5005 25%, #dbba95 45%, #5B8FFF 70%, #d0bce1 85%, transparent 100%)',
           backgroundSize: '200% 100%',
@@ -26,6 +26,11 @@ export const ShaderDivider: React.FC<ShaderDividerProps> = ({
         @keyframes flowGradient {
           0% { background-position: 0% 50%; }
           100% { background-position: 100% 50%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-flow-gradient {
+            animation: none !important;
+          }
         }
       `}</style>
     </div>

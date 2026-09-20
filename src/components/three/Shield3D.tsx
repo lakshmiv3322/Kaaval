@@ -145,6 +145,11 @@ export const Shield3D: React.FC<Shield3DProps> = ({
       window.addEventListener('mousemove', onPointerMove);
     }
 
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     let frameId: number;
     let clock = new THREE.Clock();
 
@@ -167,27 +172,36 @@ export const Shield3D: React.FC<Shield3DProps> = ({
       }
 
       // Smooth color lerp
-      bodyMaterial.emissive.lerp(targetColor, 0.08);
-      bodyMaterial.emissiveIntensity = 0.3 + (risk / 100) * 0.7 + Math.sin(elapsed * 4) * 0.1 * (risk > 65 ? 2.5 : 1);
+      bodyMaterial.emissive.lerp(targetColor, prefersReducedMotion ? 1.0 : 0.08);
+      bodyMaterial.emissiveIntensity =
+        0.3 + (risk / 100) * 0.7 + (prefersReducedMotion ? 0 : Math.sin(elapsed * 4) * 0.1 * (risk > 65 ? 2.5 : 1));
 
-      innerMaterial.emissive.lerp(targetColor, 0.08);
-      wireframeMat.color.lerp(targetColor, 0.08);
-      pointLight1.color.lerp(targetColor, 0.08);
+      innerMaterial.emissive.lerp(targetColor, prefersReducedMotion ? 1.0 : 0.08);
+      wireframeMat.color.lerp(targetColor, prefersReducedMotion ? 1.0 : 0.08);
+      pointLight1.color.lerp(targetColor, prefersReducedMotion ? 1.0 : 0.08);
 
-      // Continuous slow rotation + floating bobbing
-      const baseSpeed = 0.8 + (risk / 100) * 1.5;
-      shieldMesh.rotation.y = THREE.MathUtils.lerp(shieldMesh.rotation.y, elapsed * 0.6 * baseSpeed + targetRotY, 0.05);
-      shieldMesh.rotation.x = THREE.MathUtils.lerp(shieldMesh.rotation.x, Math.sin(elapsed * 1.5) * 0.1 + targetRotX, 0.05);
-      shieldMesh.position.y = Math.sin(elapsed * 2) * 0.08;
+      if (!prefersReducedMotion) {
+        // Continuous slow rotation + floating bobbing
+        const baseSpeed = 0.8 + (risk / 100) * 1.5;
+        shieldMesh.rotation.y = THREE.MathUtils.lerp(shieldMesh.rotation.y, elapsed * 0.6 * baseSpeed + targetRotY, 0.05);
+        shieldMesh.rotation.x = THREE.MathUtils.lerp(shieldMesh.rotation.x, Math.sin(elapsed * 1.5) * 0.1 + targetRotX, 0.05);
+        shieldMesh.position.y = Math.sin(elapsed * 2) * 0.08;
+      } else {
+        shieldMesh.rotation.y = 0;
+        shieldMesh.rotation.x = 0;
+        shieldMesh.position.y = 0;
+      }
 
       renderer.render(scene, camera);
-      frameId = requestAnimationFrame(render);
+      if (!prefersReducedMotion) {
+        frameId = requestAnimationFrame(render);
+      }
     };
 
     render();
 
     return () => {
-      cancelAnimationFrame(frameId);
+      if (frameId) cancelAnimationFrame(frameId);
       if (interactive) {
         window.removeEventListener('mousemove', onPointerMove);
       }

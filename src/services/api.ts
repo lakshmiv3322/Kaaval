@@ -264,5 +264,28 @@ export const api = {
     } catch (_e) {}
     saveStoredCalls([]);
     saveCurrentActiveCall(null);
+  },
+
+  async getSystemStatus(): Promise<{
+    geminiAvailable: boolean;
+    twilioAvailable: boolean;
+    mode: 'live-hybrid' | 'simulation';
+  }> {
+    try {
+      const res = await fetch('/api/health');
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          geminiAvailable: Boolean(data.geminiAvailable),
+          twilioAvailable: Boolean(data.twilioAvailable),
+          mode: data.geminiAvailable ? 'live-hybrid' : 'simulation',
+        };
+      }
+    } catch (_e) {}
+    return {
+      geminiAvailable: false,
+      twilioAvailable: false,
+      mode: 'simulation',
+    };
   }
 };

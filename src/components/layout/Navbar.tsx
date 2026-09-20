@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, ArrowRight } from 'lucide-react';
+import { Shield, ArrowRight, Cpu, Sparkles } from 'lucide-react';
+import { api } from '../../services/api';
 
 interface NavbarProps {
   currentRoute: string;
@@ -13,6 +14,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [systemMode, setSystemMode] = useState<'live-hybrid' | 'simulation'>('simulation');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +24,18 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    api.getSystemStatus().then((res) => {
+      if (mounted) {
+        setSystemMode(res.mode);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const isLanding = currentRoute === '/';
@@ -127,7 +141,26 @@ export const Navbar: React.FC<NavbarProps> = ({
         </nav>
 
         {/* Primary Action Button: Live Demo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Real-time Mode Badge for Judges */}
+          <div
+            className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#11161D] border border-[#1E293B] text-[11px] font-mono text-[#9CA3AF]"
+            title={
+              systemMode === 'live-hybrid'
+                ? 'Hybrid Mode: Gemini 3.8 Flash + Live Rule Engine'
+                : 'Simulation Mode: Offline-ready. Real Rule Engine (<1ms) & PII Redaction. Telecom & Gemini simulated.'
+            }
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                systemMode === 'live-hybrid' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'
+              }`}
+            />
+            <span className="text-[#CBD5E1]">
+              {systemMode === 'live-hybrid' ? 'Hybrid AI Active' : 'Simulation Mode'}
+            </span>
+          </div>
+
           <button
             type="button"
             onClick={() => onNavigate('/demo/split')}

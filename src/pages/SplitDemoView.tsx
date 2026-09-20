@@ -49,7 +49,7 @@ export const SplitDemoView: React.FC<SplitDemoViewProps> = ({ onNavigate }) => {
               TAMIL / HINDI / ENGLISH
             </span>
           </div>
-          <ElderScreen onNavigate={onNavigate} />
+          <ElderScreen embedded onNavigate={onNavigate} />
         </div>
 
         {/* Right: Family Dashboard */}
@@ -63,7 +63,7 @@ export const SplitDemoView: React.FC<SplitDemoViewProps> = ({ onNavigate }) => {
               PUSH ALERTS & ONE-TAP BARGE-IN
             </span>
           </div>
-          <FamilyDashboard onNavigate={onNavigate} />
+          <FamilyDashboard embedded onNavigate={onNavigate} />
         </div>
       </div>
     </div>

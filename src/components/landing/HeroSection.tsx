@@ -151,7 +151,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
         </div>
 
         {/* Right Column: Realistic Phone Mockup */}
-        <div className="lg:col-span-5 flex justify-center items-start h-[527px] sm:h-[620px]">
+        <div className="lg:col-span-5 flex justify-center items-start">
           <motion.div
             initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -160,7 +160,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               delay: shouldReduceMotion ? 0 : 0.3,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="h-[527px] sm:h-[620px] flex items-start justify-center"
+            className="w-[255px] h-[527px] sm:w-[300px] sm:h-[620px] relative flex items-start justify-center overflow-hidden rounded-[48px]"
           >
             <div className="scale-[0.85] origin-top sm:scale-100 transition-transform">
               <PhoneMockup

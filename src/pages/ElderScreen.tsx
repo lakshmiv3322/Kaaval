@@ -35,6 +35,7 @@ import { ShaderGradientHero } from '../components/shaders/ShaderGradientHero';
 
 interface ElderScreenProps {
   onNavigate: (route: string) => void;
+  embedded?: boolean;
 }
 
 const highlightTranscript = (text: string) =>
@@ -49,7 +50,7 @@ const highlightTranscript = (text: string) =>
     );
   });
 
-export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
+export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate, embedded = false }) => {
   const reduceMotion = useReducedMotion();
   const [selectedScenarioId, setSelectedScenarioId] = useState('digital-arrest-cbi');
   const [selectedLanguage, setSelectedLanguage] = useState<'ta' | 'hi' | 'en' | 'te'>('ta');
@@ -479,7 +480,11 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
       }}
       animate={{ x: isRiskShaking ? [0, -3, 3, 0] : 0 }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="relative min-h-[calc(100vh-4rem)] text-[#E5E7EB] flex flex-col justify-between overflow-hidden transition-[background-color] duration-700"
+      className={`relative text-[#E5E7EB] flex flex-col overflow-hidden transition-[background-color] duration-700 ${
+        embedded
+          ? 'min-h-full gap-6'
+          : 'min-h-[calc(100vh-4rem)] justify-between'
+      }`}
       style={{ backgroundColor: currentRisk >= 65 ? '#1C0E12' : currentRisk >= 30 ? '#1B1710' : '#0B0F14' }}
     >
       {/* Background Subtle Shader Gradient */}

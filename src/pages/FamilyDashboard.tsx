@@ -26,6 +26,7 @@ import { InviteModal } from '../components/modals/InviteModal';
 
 interface FamilyDashboardProps {
   onNavigate: (route: string) => void;
+  embedded?: boolean;
 }
 
 const CountUp: React.FC<{ value: number }> = ({ value }) => {
@@ -46,7 +47,7 @@ const CountUp: React.FC<{ value: number }> = ({ value }) => {
   return <>{displayValue}</>;
 };
 
-export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) => {
+export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate, embedded = false }) => {
   const reduceMotion = useReducedMotion();
   const [calls, setCalls] = useState<CallSession[]>([]);
   const [activeAlert, setActiveAlert] = useState<FamilyAlert | null>(null);
@@ -111,7 +112,9 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
   };
 
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-[#0B0F14] text-[#E5E7EB] py-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div className={`relative bg-[#0B0F14] text-[#E5E7EB] py-8 px-4 sm:px-6 lg:px-8 overflow-hidden ${
+      embedded ? 'min-h-full' : 'min-h-[calc(100vh-4rem)]'
+    }`}>
       {/* Subtle 3D background (very low-opacity shader gradient) */}
       <ShaderGradientHero speedMultiplier={0.5} className="opacity-20" />
 

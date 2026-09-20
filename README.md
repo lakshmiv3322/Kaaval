@@ -4,6 +4,19 @@
 
 ---
 
+## ⚖️ Hackathon Judging Notes
+
+> **Quick Start for Evaluators:**
+> - **Zero Configuration Needed:** All 9 routes function out-of-the-box with **zero environment variables** required.
+> - **Recommended Evaluation Starting Points:**
+>   - **Live Dual Presentation:** [`/demo/split`](/demo/split) — Side-by-side view showing the Elder Phone on the left and Family Guardian Hub on the right synchronized in real-time.
+>   - **Judge Interactive Bench:** [`/demo/judge`](/demo/judge) — Test custom transcripts, run 5 adversarial attack presets (Digital Arrest, FedEx Narcotics, Benign Family calls), and inspect real-time redaction & detection latency.
+>   - **Benchmark Suite:** [`/demo/eval`](/demo/eval) — Complete 65-transcript evaluation metrics (90.8% accuracy, 100% precision, 93.3% F1, &lt; 1 ms rule engine latency).
+>   - **Evidence Pack Dossier:** [`/demo/evidence/call-1049`](/demo/evidence/call-1049) — Download a Section 65B certified Indian Evidence Act PDF complaint for police/1930 reporting.
+> - **Transparent Architecture:** All heuristic pattern matching, on-device PII redaction, Section 65B PDF evidence generation, and cross-device sync are **100% real code**. Telephony and Gemini gracefully fallback to labeled **Simulation Mode** when API keys are unconfigured, ensuring reliable testing without external dependencies.
+
+---
+
 ## Real vs. Simulated Capabilities
 
 In accordance with transparent engineering principles, the table below delineates which subsystems execute real production code versus labeled simulations:

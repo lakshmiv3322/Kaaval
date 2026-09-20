@@ -1,5 +1,5 @@
 {
-  "evaluatedAt": "2026-09-20T11:46:26.857Z",
+  "evaluatedAt": "2026-09-20T13:01:00.414Z",
   "datasetSize": 65,
   "heuristics": {
     "metrics": {
@@ -105,7 +105,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 2,
-        "latencyMs": 8,
+        "latencyMs": 6,
         "finalTranscript": "Hello, this is Inspector Rathore from Mumbai Police Cyber Crime Cell.\nHello? What is this regarding officer?\nYour Aadhaar number was found tied to 14 illegal bank accounts involved in international money laundering.\nOh God, but I haven't opened any accounts in Mumbai! I live in Chennai.\nUnder Supreme Court order you are placed under Digital Arrest right now. Do not disconnect or leave your room.\nPlease officer, what should I do? My daughter is at work.\nDo not speak to your daughter. Download Skype immediately for video surveillance.",
         "rationale": "Detected 4 scam indicators: Authority Claim, Digital Arrest Threat, Urgency & Legal Threat, Secrecy Demand."
       },
@@ -131,7 +131,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 2,
-        "latencyMs": 3,
+        "latencyMs": 4,
         "finalTranscript": "வணக்கம், நான் டெல்லி காவல்துறையின் குற்றப்பிரிவு தலைமை ஆய்வாளர் பேசுகிறேன்.\nசார், என்ன விஷயம் சார்? நான் வயதானவள்.\nஉங்கள் பெயரில் வந்த பார்சலில் போதைப்பொருள் மற்றும் போலி பாஸ்போர்ட் பறிமுதல் செய்யப்பட்டுள்ளது.\nஐயோ, எனக்கும் அதற்கும் எந்த சம்பந்தமும் இல்லைங்க சார்.\nநீதிமன்ற உத்தரவின்படி நீங்கள் இப்போது டிஜிட்டல் கைது செய்யப்படுகிறீர்கள். அறையை விட்டு வெளியேறாதீர்கள்.\nஎன் மகனுக்கு போன் செய்து சொல்லட்டுமா சார்?\nயாருக்கும் சொல்லக்கூடாது! உடனடியாக வீடியோ காலில் வந்து உங்கள் வங்கி விபரங்களை சொல்லுங்கள்.",
         "rationale": "Detected 3 scam indicators: Authority Claim, Digital Arrest Threat, Urgency & Legal Threat."
       },
@@ -159,7 +159,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 2,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "नमस्ते, मैं सीबीआई हेडक्वार्टर नई दिल्ली से इंस्पेक्टर शर्मा बोल रहा हूँ।\nजी सर, क्या बात है?\nआपके खिलाफ गैर-जमानती गिरफ्तारी वारंट जारी हुआ है मनी लॉन्ड्रिंग केस में।\nसर मैंने तो कभी कुछ गलत नहीं किया, मैं 70 साल का बुजुर्ग हूँ।\nसुप्रीम कोर्ट के निर्देशानुसार आप डिजिटल अरेस्ट में हैं। कैमरा बंद मत करना और कमरे से बाहर मत जाना।\nमैं अपने बेटे को फोन कर लूँ?\nपरिवार में किसी को मत बताना। आरबीआई सत्यापन के लिए पैसे ट्रांसफर करने होंगे।",
         "rationale": "Detected 5 scam indicators: Authority Claim, Digital Arrest Threat, Urgency & Legal Threat, Secrecy Demand, Financial Verification Demand."
       },
@@ -281,7 +281,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 4,
-        "latencyMs": 0,
+        "latencyMs": 1,
         "finalTranscript": "Dear consumer, this is State Electricity Board power dispatch officer.\nYes sir, why are you calling?\nYour previous month electricity bill remains unpaid. Power will be disconnected tonight at 9:30 PM.\nBut I paid via check at the counter last Tuesday!\nThe update failed. Call cut pannathinga, install AnyDesk app immediately to update bill.\nI don't know how to use these apps.\nShare your bank OTP right now or your whole house will be in total darkness.",
         "rationale": "Detected 3 scam indicators: Secrecy Demand, Financial Verification Demand, Utility / Distress Coercion."
       },
@@ -327,7 +327,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 4,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "बिजली विभाग अधिकारी बोल रहा हूँ।\nजी सर, क्या परेशानी है?\nआपका बिजली का बिल बकाया है, आज रात 9 बजे आपकी लाइन काट दी जाएगी।\nपर मैंने तो पिछले हफ्ते ही जमा किया था।\nसिस्टम में अपडेट नहीं हुआ है। तुरंत इस नंबर पर पैसे भेजो और ओटीपी बताओ वर्ना बत्ती गुल हो जाएगी।",
         "rationale": "Detected 2 scam indicators: Financial Verification Demand, Utility / Distress Coercion."
       },
@@ -445,7 +445,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 0,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "This is Cyber Crime Cell headquarters. We have identified money laundering from your IP.\nSir, I only watch devotional videos on YouTube!\nSection 420 and illegal transactions warrant has been sanctioned against you.\nI am an 80 year old retired teacher.\nStay in the room and turn on your video call immediately. You are under digital custody.",
         "rationale": "Detected 3 scam indicators: Authority Claim, Digital Arrest Threat, Urgency & Legal Threat."
       },
@@ -566,7 +566,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": null,
-        "latencyMs": 0,
+        "latencyMs": 1,
         "finalTranscript": "BlueDart Courier Mumbai security screening team.\nYes?\nYour international parcel contains illicit narcotics drugs.\nWhat nonsense! I am 75 years old.\nCBI Cyber cell inspector will take you into digital custody right now unless verified.",
         "rationale": "Detected 1 scam indicators: Authority Claim."
       },
@@ -588,7 +588,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": null,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "அம்மா, உங்கள் மகன் ராகுலின் அலுவலகத்திலிருந்து பேசுகிறோம்.\nசொல்லுங்க, என் பையனுக்கு என்னாச்சு?\nஅவர் போலீஸ் ஸ்டேஷனில் உள்ளார், பெரிய விபத்து ஏற்பட்டுவிட்டது.\nகடவுளே, நான் உடனே வருகிறேன்.\nஇல்லை, இப்போதே மருத்துவமனை கணக்கிற்கு 40,000 ரூபாய் அனுப்பினால் விடுவிப்பார்கள்.",
         "rationale": "Detected 2 scam indicators: Authority Claim, Utility / Distress Coercion."
       },
@@ -730,7 +730,7 @@
         ],
         "goldFirstAlertIndex": 4,
         "predictedFirstAlertIndex": 4,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "FedEx parcel department la irundhu pesurom.\nEnna vishayam?\nParcel la drugs irukku nu police case file aagirukku.\nEnakku theriyaathu sir.\nJail la poduvom, உடனே rbi escrow ku anupunga escape aagalam.",
         "rationale": "Detected 2 scam indicators: Urgency & Legal Threat, Financial Verification Demand."
       },
@@ -822,7 +822,7 @@
         "predictedTactics": [],
         "goldFirstAlertIndex": null,
         "predictedFirstAlertIndex": null,
-        "latencyMs": 0,
+        "latencyMs": 1,
         "finalTranscript": "Hi Amma! How are you feeling today?\nHi Ananya kanna, I am doing fine. Just finished my tea.\nDid you take your morning blood pressure medicine?\nYes, right after breakfast like the doctor said.\nGreat. I will transfer 5,000 rupees to your bank account for monthly groceries this evening.\nThank you kanna, that will be very helpful.\nI will bring fresh mango kulfi when I come home this weekend! Love you Amma.",
         "rationale": "Benign signals present: Family Care Check-in, Family routine financial discussion, Verified Family Contact. Safe interaction."
       },
@@ -872,7 +872,7 @@
         ],
         "goldFirstAlertIndex": null,
         "predictedFirstAlertIndex": null,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "Good afternoon sir, this is an automated advisory from HDFC Bank Security Desk.\nYes, is my account safe?\nWe want to remind all customers that bank never asks for OTP or passwords. Never share OTP with anyone.\nYes, I know about these scams.\nYour monthly savings account statement is ready and has been delivered to your email.\nThank you for the notification.\nHave a safe and pleasant day.",
         "rationale": "Detected 1 scam indicators: Financial Verification Demand."
       },
@@ -1181,7 +1181,7 @@
         ],
         "goldFirstAlertIndex": 2,
         "predictedFirstAlertIndex": 0,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "சுங்கத்துறை அலுவலகம். உங்கள் பார்சலில் போதைப்பொருள் பிடிபட்டுள்ளது.\nநான் அனுப்பவில்லை.\nகைது வாரண்ட். வழக்கை முடித்து வைக்க வைப்புத்தொகை செலுத்தவும்.",
         "rationale": "Detected 3 scam indicators: Authority Claim, Urgency & Legal Threat, Financial Verification Demand."
       },
@@ -1332,7 +1332,7 @@
         ],
         "goldFirstAlertIndex": 2,
         "predictedFirstAlertIndex": null,
-        "latencyMs": 0,
+        "latencyMs": 1,
         "finalTranscript": "Bijli office se call hai, light kat jayegi raat ko.\nKyun bhaiya?\nBill nahi bhara. Abhi paise bhejo aur otp batao.",
         "rationale": "Detected 1 scam indicators: Financial Verification Demand."
       },
@@ -1420,7 +1420,7 @@
         "predictedTactics": [],
         "goldFirstAlertIndex": null,
         "predictedFirstAlertIndex": null,
-        "latencyMs": 1,
+        "latencyMs": 0,
         "finalTranscript": "Mom, just checking if you reached the temple safely?\nYes dear, having prasadam with Saradha aunt.\nAwesome, enjoy your morning!",
         "rationale": "Benign signals present: Verified Family Contact. Safe interaction."
       },
@@ -1522,20 +1522,20 @@
       "total": 65,
       "scamCount": 48,
       "benignCount": 17,
-      "tp": 42,
+      "tp": 41,
       "fp": 0,
       "tn": 17,
-      "fn": 6,
+      "fn": 7,
       "precision": 100,
-      "recall": 87.5,
-      "f1": 93.3,
+      "recall": 85.4,
+      "f1": 92.1,
       "fpr": 0,
-      "accuracy": 90.8,
+      "accuracy": 89.2,
       "avgTimeToFirstAlert": 0,
-      "avgLatencyMs": 925,
+      "avgLatencyMs": 654,
       "confusionMatrix": {
-        "actualScam_predScam": 42,
-        "actualScam_predBenign": 6,
+        "actualScam_predScam": 41,
+        "actualScam_predBenign": 7,
         "actualBenign_predScam": 0,
         "actualBenign_predBenign": 17
       },
@@ -1547,6 +1547,14 @@
           "text": "State Bank of India customer verification desk here.\nHello SBI, yes?\nYour bank account and ATM card will be permanently blocked in 2 hours due to unlinked KYC.\nOh, how can I link it? I have trouble walking to the branch.\nWe will do online biometric KYC right now. Tell me your 16 digit card number and CVV.\nIs that safe to share over phone?\nIf you do not share, your pension account will be frozen by RBI order. Share the OTP now.",
           "predictedScore": 40,
           "rationale": "Detected 1 scam indicators: Utility / Distress Coercion."
+        },
+        {
+          "id": "eval-020",
+          "type": "FALSE_NEGATIVE",
+          "scamType": "courier_narcotics",
+          "text": "BlueDart Courier Mumbai security screening team.\nYes?\nYour international parcel contains illicit narcotics drugs.\nWhat nonsense! I am 75 years old.\nCBI Cyber cell inspector will take you into digital custody right now unless verified.",
+          "predictedScore": 35,
+          "rationale": "Detected 1 scam indicators: Authority Claim."
         },
         {
           "id": "eval-021",
