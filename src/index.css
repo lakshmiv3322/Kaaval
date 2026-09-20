@@ -2,17 +2,34 @@
 
 @theme {
   --color-base: #0B0F14;
-  --color-surface: #121821;
-  --color-surface-hover: #1A222F;
+  --color-surface: #11161D;
+  --color-surface-hover: #171E27;
   --color-surface-border: #1E293B;
   --color-accent: #5B8FFF;
+  --color-accent-hover: #487CE8;
   --color-risk-low: #22C55E;
   --color-risk-medium: #F59E0B;
   --color-risk-high: #EF4444;
   --color-text-primary: #E5E7EB;
   --color-text-secondary: #9CA3AF;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --color-text-muted: #64748B;
+  --color-border: #26303C;
+  
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-sans: "Geist", "GeistFallback", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --ease-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --spacing-section: 8rem;
+}
+
+@font-face {
+  font-family: 'GeistFallback';
+  src: local('Arial');
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+  size-adjust: 100%;
 }
 
 @layer base {
@@ -22,11 +39,154 @@
   html {
     scroll-behavior: smooth;
     font-family: var(--font-sans);
+    background-color: #0B0F14;
+    color: #E5E7EB;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: white;
+  }
+
+  /* Accessible interactive focus & touch rules */
+  button, a {
+    touch-action: manipulation;
   }
 }
 
-/* Custom subtle noise grain generator */
-.bg-grain {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
-  background-size: 24px 24px;
+@layer components {
+  .page-shell {
+    width: min(100% - 2rem, 80rem);
+    margin-inline: auto;
+  }
+
+  .page-section {
+    padding-block: clamp(4.5rem, 11vw, 10rem);
+  }
+
+  .section-kicker {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+  }
+
+  .editorial-heading {
+    max-width: 16ch;
+    color: white;
+    font-size: clamp(2rem, 4.8vw, 4.3rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .editorial-heading em {
+    color: #c7d7ff;
+    font-family: var(--font-serif);
+    font-weight: 400;
+  }
+
+  .editorial-copy {
+    max-width: 62ch;
+    color: var(--color-text-secondary);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  .editorial-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+  }
+
+  .primary-button {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    border-radius: 0.5rem;
+    background: var(--color-accent);
+    padding: 0.75rem 1.25rem;
+    color: white;
+    font-weight: 600;
+    transition: transform 180ms var(--ease-expo), background-color 180ms ease;
+  }
+
+  .primary-button:hover {
+    background: var(--color-accent-hover);
+  }
+
+  .primary-button:active,
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .touch-target {
+    min-height: 2.75rem;
+  }
+
+  :where(button, a):focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Spotlight card hover effect for bento grid */
+.spotlight-card {
+  position: relative;
+  background-color: #11161D;
+  border: 1px solid #1E293B;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.28s ease;
+}
+
+.spotlight-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(91, 143, 255, 0.35);
+}
+
+.spotlight-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(350px circle at var(--mouse-x, -999px) var(--mouse-y, -999px), rgba(91, 143, 255, 0.22), transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card:hover {
+    transform: none !important;
+  }
+  * {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-shell {
+    width: min(100% - 2rem, 80rem);
+  }
 }

@@ -26,10 +26,16 @@ interface EvidencePackPageProps {
   onNavigate: (route: string) => void;
 }
 
+const timestampToSeconds = (timestamp: string) => {
+  const [minutes, seconds] = timestamp.split(':').map(Number);
+  return (minutes || 0) * 60 + (seconds || 0);
+};
+
 export const EvidencePackPage: React.FC<EvidencePackPageProps> = ({ callId, onNavigate }) => {
   const [call, setCall] = useState<CallSession | null>(null);
   const [feedback, setFeedback] = useState<'scam' | 'safe' | 'unsure' | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [timelinePosition, setTimelinePosition] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -134,9 +140,10 @@ Generated under Section 65B of the Indian Evidence Act (Electronic Record Certif
   }
 
   const isHigh = call.riskScore > 65;
+  const activeTactic = [...call.detectedTactics].reverse().find((tactic) => timestampToSeconds(tactic.timestamp || '00:00') <= timelinePosition);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-[#0B0F14] text-[#E5E7EB] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-[#0B0F14] py-8 px-4 text-[#E5E7EB] sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center gap-2 text-xs font-mono text-[#9CA3AF]">
@@ -185,30 +192,34 @@ Generated under Section 65B of the Indian Evidence Act (Electronic Record Certif
         </div>
 
         {/* Two-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
           {/* Left Column (Metadata + Transcript + Tactic timeline) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="space-y-6 rounded-lg bg-[#F4F1EA] p-5 text-[#1D252D] shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:p-8 lg:col-span-8">
+            <div className="border-b border-[#C8C0B2] pb-5 font-serif">
+              <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[#5B6570]">Auto-generated summary</p>
+              <p className="mt-2 text-sm leading-6 text-[#4A535D]">Verify details before filing at cybercrime.gov.in or via the 1930 helpline.</p>
+            </div>
             {/* Call Metadata Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-4 rounded-2xl bg-[#121821] border border-[#1E293B]">
+              <div className="rounded border border-[#D7D0C3] bg-[#FFFDF8] p-4">
                 <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block">Protected Elder</span>
                 <p className="font-semibold text-white text-sm mt-1 truncate">{call.elderName}</p>
                 <span className="text-[11px] font-mono text-[#9CA3AF]">{call.elderPhone}</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#121821] border border-[#1E293B]">
+              <div className="rounded border border-[#D7D0C3] bg-[#FFFDF8] p-4">
                 <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block">Suspect Caller</span>
                 <p className="font-semibold text-red-300 text-sm mt-1 truncate">{call.callerLabel}</p>
                 <span className="text-[11px] font-mono text-[#9CA3AF]">{call.callerNumber}</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#121821] border border-[#1E293B]">
+              <div className="rounded border border-[#D7D0C3] bg-[#FFFDF8] p-4">
                 <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block">Call Duration</span>
                 <p className="font-semibold text-white text-sm mt-1">{call.durationSeconds} seconds</p>
                 <span className="text-[11px] font-mono text-emerald-400">Archived Volatile</span>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#121821] border border-[#1E293B]">
+              <div className="rounded border border-[#D7D0C3] bg-[#FFFDF8] p-4">
                 <span className="text-[10px] font-mono text-[#9CA3AF] uppercase block">Threat Score</span>
                 <p className={`font-mono font-bold text-xl mt-0.5 ${isHigh ? 'text-red-400' : 'text-emerald-400'}`}>
                   {call.riskScore}/100
@@ -218,18 +229,18 @@ Generated under Section 65B of the Indian Evidence Act (Electronic Record Certif
             </div>
 
             {/* Tactic Timeline */}
-            <div className="p-6 rounded-3xl bg-[#121821] border border-[#1E293B] space-y-4">
+            <div className="space-y-4 rounded border border-[#D7D0C3] bg-[#FFFDF8] p-6">
               <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                  <ShieldAlert className="w-4 h-4 text-red-400" />
-                  <span>Detected Psychological Tactics Timeline</span>
+                <h3 className="flex items-center gap-2 font-serif text-xl font-bold text-[#1D252D]">
+                  <ShieldAlert className="h-4 w-4 text-[#A91524]" />
+                  <span>Detected tactics</span>
                 </h3>
                 <span className="text-xs font-mono text-[#9CA3AF]">{call.detectedTactics.length} markers</span>
               </div>
 
               <div className="space-y-3">
                 {call.detectedTactics.map((tac, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-[#0B0F14] border border-[#1E293B] flex items-start gap-3">
+                  <div key={idx} className={`flex items-start gap-3 rounded border p-3.5 ${activeTactic?.id === tac.id ? 'border-[#A91524] bg-[#FFF0EE]' : 'border-[#D7D0C3] bg-[#F4F1EA]'}`}>
                     <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-mono text-xs font-bold shrink-0">
                       {tac.timestamp || `00:${15 * (idx + 1)}`}
                     </span>
@@ -249,16 +260,16 @@ Generated under Section 65B of the Indian Evidence Act (Electronic Record Certif
             </div>
 
             {/* Full Verbatim Transcript Excerpt */}
-            <div className="p-6 rounded-3xl bg-[#121821] border border-[#1E293B] space-y-4">
+            <div className="space-y-4 rounded border border-[#D7D0C3] bg-[#FFFDF8] p-6">
               <div className="flex items-center justify-between pb-3 border-b border-[#1E293B]">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <h3 className="flex items-center gap-2 font-serif text-xl font-bold text-[#1D252D]">
                   <FileText className="w-4 h-4 text-[#5B8FFF]" />
                   <span>Verbatim Speech-to-Text Transcript</span>
                 </h3>
                 <span className="text-xs font-mono text-[#9CA3AF]">Whisper Audio Engine</span>
               </div>
 
-              <div className="space-y-3 max-h-72 overflow-y-auto pr-2">
+              <div className="max-h-72 space-y-3 overflow-y-auto pr-2">
                 {call.transcript.map((chunk, idx) => (
                   <div key={idx} className="text-xs space-y-0.5">
                     <div className="flex items-baseline gap-2">
@@ -271,18 +282,23 @@ Generated under Section 65B of the Indian Evidence Act (Electronic Record Certif
                         {chunk.speaker === 'caller' ? 'Suspect (Caller)' : 'Victim (Elder)'}:
                       </span>
                     </div>
-                    <p className="text-white pl-12">{chunk.text}</p>
+                    <p className="pl-12 font-serif text-base leading-7 text-[#1D252D]">{chunk.text}</p>
                     {chunk.translation && (
                       <p className="text-[#9CA3AF] pl-12 text-[11px] italic">{chunk.translation}</p>
                     )}
                   </div>
                 ))}
               </div>
+              <div className="border-t border-[#D7D0C3] pt-4">
+                <div className="flex items-center justify-between font-mono text-xs text-[#5B6570]"><span>Transcript timeline</span><span>{Math.floor(timelinePosition / 60).toString().padStart(2, '0')}:{(timelinePosition % 60).toString().padStart(2, '0')}</span></div>
+                <input aria-label="Scrub transcript timeline" type="range" min="0" max={Math.max(call.durationSeconds, 1)} value={timelinePosition} onChange={(event) => setTimelinePosition(Number(event.target.value))} className="mt-3 w-full accent-[#A91524]" />
+                <p className="mt-2 text-sm text-[#5B6570]">{activeTactic ? `At this point: ${activeTactic.name}` : 'Drag to inspect the call timeline.'}</p>
+              </div>
             </div>
           </div>
 
           {/* Right Column (Evidence Checklist + Next Steps + Feedback) */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="space-y-6 lg:sticky lg:top-24 lg:col-span-4">
             {/* Evidence Pack Section Checklist */}
             <div className="p-6 sm:p-7 rounded-3xl bg-[#121821] border border-[#1E293B] space-y-5">
               <div className="flex items-center gap-2.5 pb-3 border-b border-[#1E293B]">

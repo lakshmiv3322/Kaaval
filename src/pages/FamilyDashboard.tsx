@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import {
   Bell,
   Shield,
@@ -28,7 +28,26 @@ interface FamilyDashboardProps {
   onNavigate: (route: string) => void;
 }
 
+const CountUp: React.FC<{ value: number }> = ({ value }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / 700);
+      setDisplayValue(Math.round(value * (1 - Math.pow(1 - progress, 3))));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{displayValue}</>;
+};
+
 export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) => {
+  const reduceMotion = useReducedMotion();
   const [calls, setCalls] = useState<CallSession[]>([]);
   const [activeAlert, setActiveAlert] = useState<FamilyAlert | null>(null);
   const [isBargeInOpen, setIsBargeInOpen] = useState(false);
@@ -151,7 +170,7 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
             </div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="text-3xl font-mono font-bold text-white">
-                {activeAlert ? '1' : '0'}
+                <CountUp value={activeAlert ? 1 : 0} />
               </span>
               <span className="text-xs font-mono text-emerald-400">● Live Sentinel</span>
             </div>
@@ -172,7 +191,7 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
             </div>
             <div className="mt-3 flex items-baseline gap-2">
               <span className="text-3xl font-mono font-bold text-white">
-                {calls.filter((c) => c.riskScore > 65).length}
+                <CountUp value={calls.filter((c) => c.riskScore > 65).length} />
               </span>
               <span className="text-xs font-mono text-red-400">100% prevented loss</span>
             </div>
@@ -208,22 +227,29 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
           <AnimatePresence>
             {activeAlert ? (
               <motion.div
-                initial={{ opacity: 0, scale: 0.96, y: 15 }}
+                initial={{ opacity: 0, y: -80 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.96 }}
-                className="p-6 sm:p-8 rounded-3xl bg-red-950/25 border-2 border-red-500/60 shadow-2xl relative overflow-hidden"
+                transition={reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 25 }}
+                className="relative overflow-hidden rounded-2xl border border-red-500/60 bg-[#17151A] p-5 shadow-2xl sm:p-7"
               >
                 {/* Glow accent */}
                 <div className="absolute top-0 right-0 w-80 h-80 bg-red-500/15 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="flex flex-col gap-6">
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <span className="px-3 py-1 rounded-full bg-red-500 text-white font-mono font-bold text-xs animate-pulse">
-                        HIGH THREAT DETECTED
-                      </span>
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#5B8FFF] text-lg font-bold text-white">K</div>
+                      <div>
+                        <p className="text-sm font-semibold text-white">Kaaval Guardian</p>
+                        <p className="text-xs text-[#CBD5E1]">Now · {activeAlert.timestamp}</p>
+                      </div>
+                      <span className="ml-auto rounded-full bg-red-500 px-3 py-1 text-xs font-mono font-bold text-white">Risk {activeAlert.riskScore}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1 text-xs font-semibold text-red-200">Possible scam call</span>
                       <span className="text-xs font-mono text-[#9CA3AF]">
-                        Triggered {activeAlert.timestamp}
+                        {activeAlert.elderName}
                       </span>
                     </div>
 
@@ -235,7 +261,7 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
                       &quot;{activeAlert.summary}&quot;
                     </p>
 
-                    <div className="flex flex-wrap gap-2 pt-1">
+                    <div className="flex flex-wrap gap-2 pt-1" aria-label="Why this score">
                       {activeAlert.tactics.map((tac, idx) => (
                         <span
                           key={idx}
@@ -248,28 +274,28 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
                   </div>
 
                   {/* Two Big Action Buttons */}
-                  <div className="flex flex-col sm:flex-row lg:flex-col gap-3 min-w-[240px]">
+                  <div className="flex flex-col gap-3 sm:flex-row">
                     <button
                       type="button"
                       onClick={handleCallMomNow}
-                      className="w-full py-4 px-6 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-bold text-base shadow-xl shadow-red-900/40 transition-all flex items-center justify-center gap-2.5 active:scale-95 cursor-pointer"
+                      className="w-full min-h-[64px] rounded-xl bg-red-600 px-6 text-base font-bold text-white shadow-xl shadow-red-900/40 transition-all flex items-center justify-center gap-2.5 active:scale-95 cursor-pointer"
                     >
                       <PhoneCall className="w-5 h-5 animate-pulse" />
-                      <span>Call Mom Now (Barge In)</span>
+                      <span>Join the call</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={handleSendVoiceWarning}
                       disabled={voiceWarningSent}
-                      className={`w-full py-3.5 px-6 rounded-2xl font-semibold text-sm transition-all flex items-center justify-center gap-2 border ${
+                      className={`w-full min-h-[64px] rounded-xl px-6 text-base font-semibold transition-all flex items-center justify-center gap-2 border ${
                         voiceWarningSent
                           ? 'bg-emerald-600/30 border-emerald-500/50 text-emerald-300'
                           : 'bg-[#1E293B] hover:bg-[#2A374D] border-[#334155] text-white'
                       }`}
                     >
                       <Volume2 className="w-4 h-4 text-amber-400" />
-                      <span>{voiceWarningSent ? 'Voice Warning Delivered' : 'Send Voice Warning (Tamil)'}</span>
+                      <span>{voiceWarningSent ? 'Voice warning delivered' : 'Send voice warning'}</span>
                     </button>
                   </div>
                 </div>

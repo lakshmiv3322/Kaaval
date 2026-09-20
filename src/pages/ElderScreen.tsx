@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import {
   PhoneCall,
   PhoneOff,
@@ -30,6 +30,11 @@ interface ElderScreenProps {
   onNavigate: (route: string) => void;
 }
 
+const highlightTranscript = (text: string) => text.split(/(Inspector|Crime Branch|arrest|warrant|Digital Arrest|Skype|do not|transfer|surveillance)/gi).map((part, index) => {
+  const highlighted = /^(Inspector|Crime Branch|arrest|warrant|Digital Arrest|Skype|do not|transfer|surveillance)$/i.test(part);
+  return highlighted ? <mark key={`${part}-${index}`} className="rounded bg-red-500/25 px-1 text-red-100">{part}</mark> : part;
+});
+
 export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
   const [selectedScenarioId, setSelectedScenarioId] = useState('digital-arrest-cbi');
   const [selectedLanguage, setSelectedLanguage] = useState<'ta' | 'hi' | 'en' | 'te'>('ta');
@@ -40,6 +45,11 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
   const [childAlertState, setChildAlertState] = useState<'idle' | 'calling' | 'connected'>('idle');
   const [liveTranscript, setLiveTranscript] = useState<TranscriptChunk[]>([]);
   const [timerSeconds, setTimerSeconds] = useState(0);
+  const [isMuted, setIsMuted] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [isRiskShaking, setIsRiskShaking] = useState(false);
+  const previousRiskRef = useRef(0);
+  const reduceMotion = useReducedMotion();
 
   const scenario = SCENARIO_PRESETS.find((s) => s.id === selectedScenarioId) || SCENARIO_PRESETS[0];
 
@@ -247,8 +257,47 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
   const isCallActive = callSession?.status === 'in-progress' || callSession?.status === 'barged-in';
   const currentWarning = REGIONAL_WARNINGS[selectedLanguage] || REGIONAL_WARNINGS.en;
 
+  useEffect(() => {
+    const crossedDanger = previousRiskRef.current < 65 && currentRisk >= 65;
+    previousRiskRef.current = currentRisk;
+    if (!crossedDanger || reduceMotion) return;
+
+    setIsRiskShaking(true);
+    const shakeTimer = window.setTimeout(() => setIsRiskShaking(false), 300);
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate([200, 100, 200]);
+
+    if (hasInteracted && !isMuted && typeof window !== 'undefined') {
+      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (AudioContextClass) {
+        const context = new AudioContextClass();
+        const gain = context.createGain();
+        gain.gain.setValueAtTime(0.035, context.currentTime);
+        gain.connect(context.destination);
+        [660, 440].forEach((frequency, index) => {
+          const oscillator = context.createOscillator();
+          oscillator.frequency.value = frequency;
+          oscillator.type = 'sine';
+          oscillator.connect(gain);
+          oscillator.start(context.currentTime + index * 0.12);
+          oscillator.stop(context.currentTime + index * 0.12 + 0.09);
+        });
+        window.setTimeout(() => void context.close(), 500);
+      }
+    }
+    return () => window.clearTimeout(shakeTimer);
+  }, [currentRisk, hasInteracted, isMuted, reduceMotion]);
+
   return (
-    <div className="relative min-h-[calc(100vh-4rem)] bg-[#0B0F14] text-[#E5E7EB] flex flex-col justify-between overflow-hidden">
+    <motion.div
+      onPointerDown={() => {
+        setHasInteracted(true);
+        if (!hasInteracted) setIsMuted(false);
+      }}
+      animate={{ x: isRiskShaking ? [0, -3, 3, 0] : 0 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="relative min-h-[calc(100vh-4rem)] text-[#E5E7EB] flex flex-col justify-between overflow-hidden transition-[background-color] duration-700"
+      style={{ backgroundColor: currentRisk >= 65 ? '#1C0E12' : currentRisk >= 30 ? '#1B1710' : '#0B0F14' }}
+    >
       {/* Background Subtle Shader Gradient */}
       <ShaderGradientHero
         speedMultiplier={isCallActive ? 1.4 + (currentRisk / 100) * 1.5 : 0.6}
@@ -277,6 +326,15 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
 
         {/* Right Status Dot & Language Switcher */}
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setIsMuted((muted) => !muted)}
+            className="flex min-h-[44px] items-center gap-2 rounded-lg border border-[#26303C] bg-[#0B0F14]/80 px-3 text-xs font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B8FFF]"
+            aria-pressed={isMuted}
+          >
+            <Volume2 className={`h-4 w-4 ${isMuted ? 'text-[#9CA3AF]' : 'text-[#5B8FFF]'}`} />
+            <span>{isMuted ? 'Sound off' : 'Sound on'}</span>
+          </button>
           {/* Language Selector */}
           <div className="flex items-center bg-[#0B0F14] border border-[#1E293B] rounded-lg p-0.5 text-xs font-mono">
             <button
@@ -386,25 +444,30 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
 
               {/* HIGH CONTRAST REGIONAL WARNING BANNER (When risk crosses threshold) */}
               <AnimatePresence>
-                {currentRisk >= 55 && (
+                {currentRisk >= 65 && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 10 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="p-5 rounded-2xl bg-red-600/90 border-2 border-white/20 text-white shadow-2xl my-4 text-center animate-pulse"
+                    className="relative my-4 overflow-hidden rounded-2xl border-2 border-white/30 bg-[#A91524] p-6 text-center text-white shadow-2xl"
                   >
+                    <div className="pointer-events-none absolute inset-3 rounded-xl border border-white/50 animate-ping" />
                     <div className="flex items-center justify-center gap-2 mb-1">
                       <AlertTriangle className="w-6 h-6 text-yellow-300 animate-bounce" />
-                      <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+                      <h3 className="text-[28px] font-black leading-tight tracking-tight sm:text-[34px]">
                         {currentWarning.title}
                       </h3>
                     </div>
-                    <p className="text-sm sm:text-base font-semibold text-white/95">
+                    <p className="text-lg font-semibold leading-7 text-white">
                       {currentWarning.subtitle}
                     </p>
-                    <p className="mt-1 text-xs sm:text-sm font-medium text-yellow-200">
+                    <p className="mt-2 text-base font-medium leading-6 text-yellow-100">
                       {currentWarning.advice}
                     </p>
+                    <div className="relative mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <button type="button" onClick={handleEndCall} className="min-h-[64px] rounded-xl bg-white px-4 text-lg font-bold text-[#71101A] transition-transform active:scale-[0.98]">Hang up</button>
+                      <button type="button" onClick={handleCallChildNow} className="min-h-[64px] rounded-xl border-2 border-white bg-transparent px-4 text-lg font-bold text-white transition-transform active:scale-[0.98]">Call my child</button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -435,13 +498,13 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
                 {liveTranscript.length === 0 ? (
                   <p className="text-xs text-[#9CA3AF] italic">Connecting to speech transcript engine...</p>
                 ) : (
-                  liveTranscript.map((chunk) => (
-                    <div key={chunk.id} className="text-xs">
+                  liveTranscript.map((chunk, index) => (
+                    <div key={chunk.id} className={`text-[18px] leading-7 transition-opacity duration-300 ${index === liveTranscript.length - 1 ? 'text-white' : 'text-white/50'}`}>
                       <span className="font-mono text-[#9CA3AF] mr-2">[{chunk.timestamp}]</span>
                       <span className={chunk.speaker === 'caller' ? 'text-red-300 font-medium' : 'text-emerald-300 font-medium'}>
                         {chunk.speaker === 'caller' ? 'Caller' : 'Elder'}:
                       </span>{' '}
-                      <span className="text-white">{chunk.text}</span>
+                      <span className={index === liveTranscript.length - 1 ? 'text-white' : 'text-white/50'}>{highlightTranscript(chunk.text)}</span>
                       {chunk.translation && (
                         <p className="text-[11px] text-[#9CA3AF] pl-12 italic">{chunk.translation}</p>
                       )}
@@ -452,6 +515,7 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
 
               {/* BIG HELP BUTTON: "Call My Child Now" */}
               <div className="mt-6 pt-4 border-t border-[#1E293B] flex flex-col sm:flex-row items-center gap-3">
+                {isPlaying && <span className="rounded-full border border-[#5B8FFF]/40 bg-[#5B8FFF]/10 px-3 py-2 text-sm font-semibold text-[#C7D7FF]">Scripted demo</span>}
                 <button
                   type="button"
                   onClick={handleCallChildNow}
@@ -601,6 +665,6 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };

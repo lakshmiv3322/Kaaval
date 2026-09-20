@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Navbar } from './components/layout/Navbar';
 import { LandingPage } from './pages/LandingPage';
 import { ElderScreen } from './pages/ElderScreen';
@@ -82,7 +83,17 @@ export default function App() {
         hasActiveAlert={hasActiveAlert}
       />
       <div className="flex-1">
-        {renderPage()}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentRoute}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {renderPage()}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );

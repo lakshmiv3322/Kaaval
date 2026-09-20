@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { PhoneCall, PhoneOff, Mic, MicOff, Volume2, ShieldAlert, CheckCircle2, Radio } from 'lucide-react';
 import { AudioWaveVisualizer } from '../ui/AudioWaveVisualizer';
 
@@ -12,6 +12,16 @@ interface BargeInModalProps {
   onHangupBoth: () => void;
 }
 
+const BridgeNode: React.FC<{ label: string; detail: string; tone: 'blue' | 'red' }> = ({ label, detail, tone }) => (
+  <div className="w-[31%]">
+    <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full border-2 ${tone === 'red' ? 'border-red-400 bg-red-500/20 text-red-200' : 'border-[#5B8FFF] bg-[#5B8FFF]/20 text-[#C7D7FF]'}`}>
+      <Radio className="h-5 w-5" />
+    </div>
+    <p className="mt-2 text-sm font-bold text-white">{label}</p>
+    <p className="truncate text-[11px] text-[#CBD5E1]">{detail}</p>
+  </div>
+);
+
 export const BargeInModal: React.FC<BargeInModalProps> = ({
   isOpen,
   elderName,
@@ -20,9 +30,18 @@ export const BargeInModal: React.FC<BargeInModalProps> = ({
   onClose,
   onHangupBoth
 }) => {
+  const reduceMotion = useReducedMotion();
   const [isMuted, setIsMuted] = useState(false);
   const [warningPlayed, setWarningPlayed] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Conference Bridge Established. You are live on the line.');
+  const [durationSeconds, setDurationSeconds] = useState(0);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const startedAt = Date.now();
+    const interval = window.setInterval(() => setDurationSeconds(Math.floor((Date.now() - startedAt) / 1000)), 1000);
+    return () => window.clearInterval(interval);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -56,6 +75,7 @@ export const BargeInModal: React.FC<BargeInModalProps> = ({
                 <h3 className="text-xl font-bold text-white tracking-tight">
                   Live Intervention in Progress
                 </h3>
+                <p className="mt-1 font-mono text-sm tabular-nums text-[#CBD5E1]">{String(Math.floor(durationSeconds / 60)).padStart(2, '0')}:{String(durationSeconds % 60).padStart(2, '0')} live</p>
               </div>
             </div>
             <button
@@ -65,6 +85,19 @@ export const BargeInModal: React.FC<BargeInModalProps> = ({
             >
               Minimize
             </button>
+          </div>
+
+          {/* Three-node bridge diagram */}
+          <div className="relative my-7 rounded-2xl border border-[#26303C] bg-[#0B0F14] px-5 py-7">
+            <div className="absolute left-[18%] right-[18%] top-1/2 flex -translate-y-1/2 items-center justify-between">
+              <motion.div initial={{ scaleX: reduceMotion ? 1 : 0 }} animate={{ scaleX: 1 }} transition={reduceMotion ? { duration: 0 } : { delay: 0.2, duration: 0.5 }} className="h-px w-[38%] origin-left bg-[#5B8FFF]" />
+              <motion.div initial={{ scaleX: reduceMotion ? 1 : 0 }} animate={{ scaleX: 1 }} transition={reduceMotion ? { duration: 0 } : { delay: 0.45, duration: 0.5 }} className="h-px w-[38%] origin-left bg-red-400" />
+            </div>
+            <div className="relative z-10 flex items-center justify-between gap-2 text-center">
+              <BridgeNode label="Elder" detail={elderName} tone="blue" />
+              <BridgeNode label="Family" detail="You (Son)" tone="blue" />
+              <BridgeNode label="Caller" detail="Suspected scammer" tone="red" />
+            </div>
           </div>
 
           {/* Active Participants */}

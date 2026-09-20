@@ -1,5 +1,5 @@
-import React from 'react';
-import { Shield, Radio, LayoutGrid, Smartphone, AlertOctagon, FileCheck2, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   currentRoute: string;
@@ -11,129 +11,98 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({
   currentRoute,
   onNavigate,
-  activeRiskScore = 0,
-  hasActiveAlert = false,
 }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 24);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isLanding = currentRoute === '/';
+  const showBackground = !isLanding || isScrolled;
+
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, hash: string) => {
+    e.preventDefault();
+    if (!isLanding) {
+      onNavigate('/');
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        el?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.querySelector(hash);
+      el?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#1E293B]/70 bg-[#0B0F14]/80 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+        showBackground
+          ? 'bg-[#0B0F14]/85 backdrop-blur-md border-b border-[#1E293B]/70 shadow-sm'
+          : 'bg-transparent border-b border-transparent'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand Wordmark */}
+        {/* Wordmark Left */}
         <button
           type="button"
           onClick={() => onNavigate('/')}
-          className="flex items-center gap-2.5 group text-left cursor-pointer"
+          className="flex items-center gap-2.5 group text-left cursor-pointer min-h-[44px] min-w-[44px] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B8FFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F14] active:scale-[0.98] transition-transform"
+          aria-label="Kaaval Home"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#5B8FFF] to-[#ff5005] p-[1.5px] transition-transform group-hover:scale-105">
-            <div className="w-full h-full bg-[#0B0F14] rounded-[7px] flex items-center justify-center">
-              <Shield className="w-4 h-4 text-[#5B8FFF] group-hover:text-white transition-colors" />
-            </div>
+          <div className="w-8 h-8 rounded-lg bg-[#5B8FFF]/15 border border-[#5B8FFF]/40 flex items-center justify-center text-[#5B8FFF] group-hover:bg-[#5B8FFF]/25 transition-colors">
+            <Shield className="w-4 h-4" />
           </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-lg tracking-tight text-white font-sans">
-                Kaaval
-              </span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-[#5B8FFF]/15 border border-[#5B8FFF]/30 text-[#5B8FFF] font-mono font-medium">
-                v1.0 SHIELD
-              </span>
-            </div>
-            <p className="text-[10px] text-[#9CA3AF] font-mono leading-none -mt-0.5 hidden sm:block">
-              Digital Arrest Scam Interceptor
-            </p>
-          </div>
+          <span className="font-semibold text-lg tracking-tight text-white font-sans">
+            Kaaval
+          </span>
         </button>
 
-        {/* Center Nav Links */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#121821]/80 border border-[#1E293B] rounded-full px-2 py-1">
-          <button
-            type="button"
-            onClick={() => onNavigate('/')}
-            className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-              currentRoute === '/'
-                ? 'bg-[#1E293B] text-white shadow-sm'
-                : 'text-[#9CA3AF] hover:text-white'
-            }`}
+        {/* 3 Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8 text-sm">
+          <a
+            href="#how-it-works"
+            onClick={(e) => handleAnchorClick(e, '#how-it-works')}
+            className="text-[#9CA3AF] hover:text-white transition-colors min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B8FFF] rounded-md px-1"
           >
-            Overview
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('/demo/elder')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-              currentRoute === '/demo/elder'
-                ? 'bg-[#5B8FFF] text-white shadow-sm shadow-[#5B8FFF]/30'
-                : 'text-[#9CA3AF] hover:text-white'
-            }`}
+            How it works
+          </a>
+          <a
+            href="#for-families"
+            onClick={(e) => handleAnchorClick(e, '#for-families')}
+            className="text-[#9CA3AF] hover:text-white transition-colors min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B8FFF] rounded-md px-1"
           >
-            <Smartphone className="w-3.5 h-3.5" />
-            Elder Screen
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('/demo/family')}
-            className={`relative flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-              currentRoute === '/demo/family'
-                ? 'bg-[#1E293B] text-white shadow-sm'
-                : 'text-[#9CA3AF] hover:text-white'
-            }`}
+            For families
+          </a>
+          <a
+            href="#for-banks"
+            onClick={(e) => handleAnchorClick(e, '#for-banks')}
+            className="text-[#9CA3AF] hover:text-white transition-colors min-h-[44px] inline-flex items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B8FFF] rounded-md px-1"
           >
-            <Radio className="w-3.5 h-3.5 text-[#5B8FFF]" />
-            Family Dashboard
-            {hasActiveAlert && (
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping absolute -top-0.5 right-1" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('/demo/evidence/call-1049')}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
-              currentRoute.startsWith('/demo/evidence')
-                ? 'bg-[#1E293B] text-white shadow-sm'
-                : 'text-[#9CA3AF] hover:text-white'
-            }`}
-          >
-            <FileCheck2 className="w-3.5 h-3.5" />
-            Evidence Pack
-          </button>
+            For banks
+          </a>
         </nav>
 
-        {/* Right Action: Split Screen Demo for Judges */}
-        <div className="flex items-center gap-2.5">
-          {activeRiskScore > 50 && (
-            <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/15 border border-red-500/40 text-red-400 text-xs font-mono">
-              <AlertOctagon className="w-3.5 h-3.5 animate-pulse" />
-              <span>Risk: {activeRiskScore}%</span>
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={() => onNavigate('/demo/split')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold tracking-wide transition-all ${
-              currentRoute === '/demo/split'
-                ? 'bg-[#ff5005] border-[#ff5005] text-white shadow-md shadow-[#ff5005]/20'
-                : 'bg-[#121821] hover:bg-[#1A222F] border-[#1E293B] text-white'
-            }`}
-            title="Open side-by-side Elder + Family view for live presentation"
-          >
-            <LayoutGrid className="w-3.5 h-3.5 text-[#5B8FFF]" />
-            <span className="hidden sm:inline">Split Judge View</span>
-            <span className="sm:hidden">Split</span>
-          </button>
-
+        {/* Primary Action Button: Live Demo */}
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => onNavigate('/demo/elder')}
-            className="flex items-center gap-1 px-3.5 py-1.5 rounded-lg bg-[#5B8FFF] hover:bg-[#4A7CEB] text-white text-xs font-semibold shadow-md shadow-[#5B8FFF]/20 transition-all active:scale-95"
+            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#5B8FFF] hover:bg-[#487CE8] text-white text-xs sm:text-sm font-medium shadow-md shadow-[#5B8FFF]/20 transition-all flex items-center gap-2 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5B8FFF] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0F14] cursor-pointer"
           >
-            <span>Live Demo</span>
-            <ArrowRight className="w-3 h-3" />
+            <span>Live demo</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
     </header>
   );
 };
+

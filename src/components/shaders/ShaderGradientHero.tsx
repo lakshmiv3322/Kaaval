@@ -229,9 +229,16 @@ export const ShaderGradientHero: React.FC<ShaderGradientHeroProps> = ({
     let startTime = performance.now();
     let accumulatedTime = 0;
     let lastTime = startTime;
+    let isVisible = true;
+    let isTabActive = !document.hidden;
 
-    const render = (now: number) => {
-      const dt = (now - lastTime) * 0.001;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const drawFrame = (now: number) => {
+      const dt = Math.min((now - lastTime) * 0.001, 0.1);
       lastTime = now;
 
       // Smooth mouse lerp
@@ -247,16 +254,74 @@ export const ShaderGradientHero: React.FC<ShaderGradientHeroProps> = ({
       gl.uniform1f(uRiskLoc, riskRef.current);
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-      animationFrameId = requestAnimationFrame(render);
     };
 
-    animationFrameId = requestAnimationFrame(render);
+    const render = (now: number) => {
+      if (!isVisible || !isTabActive) {
+        animationFrameId = 0;
+        return;
+      }
+
+      drawFrame(now);
+
+      if (!prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const startLoop = () => {
+      if (!animationFrameId && isVisible && isTabActive) {
+        lastTime = performance.now();
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const stopLoop = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+    };
+
+    // IntersectionObserver to pause off-screen
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        isVisible = entry?.isIntersecting ?? false;
+        if (isVisible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+
+    // Tab visibility listener
+    const handleVisibilityChange = () => {
+      isTabActive = !document.hidden;
+      if (isTabActive && isVisible) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Initial trigger
+    if (prefersReducedMotion) {
+      drawFrame(performance.now());
+    } else {
+      startLoop();
+    }
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(animationFrameId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      observer.disconnect();
+      stopLoop();
       gl.deleteProgram(program);
       gl.deleteShader(vs);
       gl.deleteShader(fs);

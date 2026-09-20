@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { RiskGlowShader } from '../shaders/RiskGlowShader';
 
 interface RiskMeterProps {
   score: number; // 0 - 100
@@ -31,8 +30,8 @@ export const RiskMeter: React.FC<RiskMeterProps> = ({
     badgeBg = 'bg-amber-500/15 text-amber-400 border-amber-500/30';
   }
 
-  const radius = size === 'lg' ? 95 : size === 'md' ? 75 : 50;
-  const strokeWidth = size === 'lg' ? 14 : size === 'md' ? 10 : 7;
+  const radius = size === 'lg' ? 104 : size === 'md' ? 76 : 50;
+  const strokeWidth = size === 'lg' ? 12 : size === 'md' ? 10 : 7;
   const circumference = 2 * Math.PI * radius;
   // Use semi-arc (around 240 degrees)
   const arcLength = circumference * 0.72;
@@ -40,19 +39,19 @@ export const RiskMeter: React.FC<RiskMeterProps> = ({
 
   const width = (radius + strokeWidth) * 2;
   const height = width;
+  const glowOpacity = 0.08 + (safeScore / 100) * 0.28;
 
   return (
     <div className="relative flex flex-col items-center justify-center select-none">
-      {/* Risk Shader Glow aura */}
-      {showGlow && (
-        <RiskGlowShader
-          riskScore={safeScore}
-          size={size === 'lg' ? 380 : 280}
-        />
-      )}
-
       {/* SVG Arc Gauge */}
-      <div className="relative" style={{ width, height }}>
+      <div
+        className="relative"
+        style={{
+          width,
+          height,
+          filter: showGlow ? `drop-shadow(0 0 ${8 + safeScore * 0.12}px ${color}${Math.round(glowOpacity * 255).toString(16).padStart(2, '0')})` : undefined,
+        }}
+      >
         <svg
           className="w-full h-full -rotate-[126deg] transform"
           viewBox={`0 0 ${width} ${height}`}
@@ -85,7 +84,7 @@ export const RiskMeter: React.FC<RiskMeterProps> = ({
 
         {/* Center Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-[11px] font-mono tracking-wider text-[#9CA3AF] uppercase">
+          <span className="text-[11px] font-mono tracking-wider text-[#CBD5E1] uppercase">
             Threat Level
           </span>
           <div className="flex items-baseline gap-1 mt-0.5">
@@ -93,7 +92,7 @@ export const RiskMeter: React.FC<RiskMeterProps> = ({
               key={safeScore}
               initial={{ scale: 0.9, opacity: 0.7 }}
               animate={{ scale: 1, opacity: 1 }}
-              className={`font-mono font-bold tracking-tight ${
+              className={`font-mono font-bold tabular-nums tracking-tight ${
                 size === 'lg' ? 'text-5xl' : size === 'md' ? 'text-4xl' : 'text-2xl'
               }`}
               style={{ color }}
