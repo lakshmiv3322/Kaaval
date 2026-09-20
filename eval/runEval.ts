@@ -293,8 +293,20 @@ Output strict JSON with riskScore (0-100), summary.`,
   };
 
   const resultsPath = path.join(process.cwd(), 'eval', 'results.json');
-  fs.writeFileSync(resultsPath, JSON.stringify(outputPayload, null, 2));
-  console.log(`✅ Evaluation results saved to ${resultsPath}\n`);
+  const srcDataPath = path.join(process.cwd(), 'src', 'data', 'evalResults.json');
+  const publicPath = path.join(process.cwd(), 'public', 'eval-results.json');
+  const jsonContent = JSON.stringify(outputPayload, null, 2);
+
+  fs.writeFileSync(resultsPath, jsonContent);
+  console.log(`✅ Evaluation results saved to ${resultsPath}`);
+
+  try {
+    fs.writeFileSync(srcDataPath, jsonContent);
+    fs.writeFileSync(publicPath, jsonContent);
+    console.log(`✅ Evaluation results synced to client bundle (${srcDataPath}) and static assets (${publicPath})\n`);
+  } catch (err) {
+    console.warn('Could not sync to src/data or public:', err);
+  }
 }
 
 runEvaluation().catch(console.error);

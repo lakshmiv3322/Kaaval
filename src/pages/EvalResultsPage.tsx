@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   RefreshCw
 } from 'lucide-react';
+import bundledEvalResults from '../data/evalResults.json';
 
 interface TestCase {
   id: string;
@@ -91,30 +92,49 @@ interface EvalData {
   };
 }
 
+const defaultBenchmarkData: EvalData = bundledEvalResults as unknown as EvalData;
+
 export const EvalResultsPage: React.FC<{ onNavigate: (route: string) => void }> = ({ onNavigate }) => {
-  const [evalData, setEvalData] = useState<EvalData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedCase, setSelectedCase] = useState<TestCase | null>(null);
+  const [evalData, setEvalData] = useState<EvalData | null>(defaultBenchmarkData);
+  const [loading, setLoading] = useState(false);
+  const [selectedCase, setSelectedCase] = useState<TestCase | null>(
+    defaultBenchmarkData?.heuristics?.detailedCases?.[0] || null
+  );
   const [filterType, setFilterType] = useState<string>('all');
   const [langFilter, setLangFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'hybrid' | 'heuristics'>('hybrid');
 
   const fetchResults = async () => {
-    setLoading(true);
     try {
-      const res = await fetch('/api/demo/eval/results');
-      if (res.ok) {
+      // First try live server endpoint, then static JSON asset fallback
+      let res: Response | null = null;
+      try {
+        res = await fetch('/api/demo/eval/results');
+      } catch {
+        res = null;
+      }
+
+      if (!res || !res.ok) {
+        try {
+          res = await fetch('/eval-results.json');
+        } catch {
+          res = null;
+        }
+      }
+
+      if (res && res.ok) {
         const data = await res.json();
-        setEvalData(data);
-        if (data.heuristics?.detailedCases?.length > 0) {
-          setSelectedCase(data.heuristics.detailedCases[0]);
+        if (data && data.heuristics?.metrics) {
+          setEvalData(data);
+          if (data.heuristics?.detailedCases?.length > 0 && !selectedCase) {
+            setSelectedCase(data.heuristics.detailedCases[0]);
+          }
         }
       }
     } catch (e) {
-      console.error('Failed to load eval results', e);
-    } finally {
-      setLoading(false);
+      // Bundled benchmark data is already rendered as initial state
+      console.info('Using bundled benchmark evaluation dataset:', e);
     }
   };
 
@@ -122,7 +142,7 @@ export const EvalResultsPage: React.FC<{ onNavigate: (route: string) => void }> 
     fetchResults();
   }, []);
 
-  if (loading) {
+  if (loading && !evalData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0B0F14] text-white">
         <div className="flex flex-col items-center gap-4">
@@ -141,12 +161,25 @@ export const EvalResultsPage: React.FC<{ onNavigate: (route: string) => void }> 
         <p className="text-[#9CA3AF] mb-6 text-sm">
           Run <code className="bg-[#1E293B] px-2 py-1 rounded text-[#5B8FFF]">npm run eval</code> in the terminal to evaluate the detection pipeline on the 65-transcript dataset.
         </p>
-        <button
-          onClick={() => onNavigate('/')}
-          className="px-4 py-2 bg-[#5B8FFF] rounded-xl text-white text-sm"
-        >
-          Return Home
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              setEvalData(defaultBenchmarkData);
+              if (defaultBenchmarkData?.heuristics?.detailedCases?.length > 0) {
+                setSelectedCase(defaultBenchmarkData.heuristics.detailedCases[0]);
+              }
+            }}
+            className="px-4 py-2 bg-[#5B8FFF] hover:bg-[#4a7de6] transition-colors rounded-xl text-white text-sm font-medium"
+          >
+            Load Pre-computed 65-Call Benchmark
+          </button>
+          <button
+            onClick={() => onNavigate('/')}
+            className="px-4 py-2 bg-[#1E293B] hover:bg-[#334155] transition-colors rounded-xl text-white text-sm"
+          >
+            Return Home
+          </button>
+        </div>
       </div>
     );
   }
