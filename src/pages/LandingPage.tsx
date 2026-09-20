@@ -33,12 +33,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
   return (
     <div className="relative min-h-screen bg-[#0B0F14] text-[#E5E7EB] overflow-hidden">
       {/* 1. HERO SECTION (Full Viewport Height) */}
-      <section className="relative min-h-[92vh] flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+      <section className="relative min-h-[calc(100svh-4rem)] flex flex-col justify-center items-center gap-10 px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
         {/* Animated ShaderGradient Plane (GLSL continuous waves + grain) */}
         <ShaderGradientHero
           speedMultiplier={heroHovered ? 2.4 : 1.0}
-          className="opacity-75"
+          className="opacity-60"
         />
+        {/* Top scrim — darkens gradient so heading text pops */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0B0F14]/60 via-[#0B0F14]/35 to-[#0B0F14]" />
+        {/* Radial vignette — extra contrast around center content */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(11,15,20,0.75)_0%,rgba(11,15,20,0)_65%)]" />
 
         {/* Top Floating Badge */}
         <motion.div
@@ -54,15 +58,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
         </motion.div>
 
         {/* Center Content: LUMAE-style bold editorial layout */}
-        <div className="z-10 max-w-4xl mx-auto text-center my-auto px-2">
+        <div className="relative z-10 max-w-4xl mx-auto text-center px-2">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.15 }}
-            className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.08] font-sans"
+            className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.08] font-sans [text-shadow:0_2px_30px_rgba(11,15,20,0.9)]"
           >
             A live scam-call shield <br />
-            <span className="bg-gradient-to-r from-white via-[#E5E7EB] to-[#9CA3AF] bg-clip-text text-transparent">
+            <span className="text-[#C7D7FF]">
               for your elderly parents.
             </span>
           </motion.h1>
@@ -71,7 +75,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.35 }}
-            className="mt-6 text-lg sm:text-xl text-[#9CA3AF] max-w-2xl mx-auto font-normal leading-relaxed"
+            className="mt-6 text-lg sm:text-xl text-[#CBD5E1] max-w-2xl mx-auto font-normal leading-relaxed"
           >
             Kaaval listens to calls in real time, spots deceptive coercion scripts in their native language, warns them on-screen, and alerts you with a one-tap join.
           </motion.p>
@@ -103,12 +107,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             </a>
           </motion.div>
 
-          {/* Key Metric micro-stats */}
+          {/* Key Metric micro-stats — FIX 9: honest claims */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 1 }}
-            className="mt-12 pt-8 border-t border-[#1E293B]/50 flex flex-wrap justify-center items-center gap-6 sm:gap-12 text-xs font-mono text-[#9CA3AF]"
+            className="mt-12 pt-8 border-t border-[#1E293B]/50 flex flex-wrap justify-center items-center gap-6 sm:gap-12 text-xs font-mono text-[#CBD5E1]"
           >
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
@@ -116,17 +120,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
             </div>
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#5B8FFF]" />
-              <span>&lt;1.2s Acoustic Latency</span>
+              <span>Risk score updates every line</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#ff5005]" />
-              <span>Zero Content Stored by Default</span>
+              <span>No audio recorded or stored</span>
             </div>
           </motion.div>
         </div>
 
-        {/* 3D Shield Rotating in Corner */}
-        <div className="z-10 absolute bottom-6 right-6 hidden lg:flex flex-col items-center p-3 rounded-2xl bg-[#121821]/60 border border-[#1E293B]/60 backdrop-blur-xl">
+        {/* 3D Shield Rotating in Corner — xl: to avoid overlap on laptop widths */}
+        <div className="z-10 absolute bottom-6 right-6 hidden xl:flex flex-col items-center p-3 rounded-2xl bg-[#121821]/60 border border-[#1E293B]/60 backdrop-blur-xl">
           <Shield3D riskScore={heroHovered ? 80 : 25} size={110} />
           <span className="text-[10px] font-mono text-[#9CA3AF] mt-1">3D Active Sentinel</span>
         </div>

@@ -45,7 +45,11 @@ export const ShaderGradientHero: React.FC<ShaderGradientHeroProps> = ({
 
     // Fragment shader source (ShaderGradient-style organic waves + film grain)
     const fsSource = `
+      #ifdef GL_FRAGMENT_PRECISION_HIGH
+      precision highp float;
+      #else
       precision mediump float;
+      #endif
       varying vec2 vUv;
       uniform float uTime;
       uniform vec2 uResolution;
@@ -121,11 +125,11 @@ export const ShaderGradientHero: React.FC<ShaderGradientHeroProps> = ({
         float riskFactor = clamp(uRisk / 100.0, 0.0, 1.0);
         vec3 accentColor = mix(cElectric, cRiskRed, riskFactor);
 
-        // Gradient wave blending
+        // Gradient wave blending (calmed palette for text readability)
         vec3 color = mix(cDark, cNavy, smoothstep(-0.8, 0.2, combined));
-        color = mix(color, cLavender * 0.85, smoothstep(0.0, 0.7, n1));
-        color = mix(color, cWarm1 * 0.75, smoothstep(0.2, 0.8, n2) * (1.0 - riskFactor * 0.4));
-        color = mix(color, accentColor * 0.9, smoothstep(0.4, 0.95, n3 + combined * 0.3));
+        color = mix(color, cLavender * 0.5, smoothstep(0.0, 0.7, n1));
+        color = mix(color, cWarm1 * 0.55, smoothstep(0.2, 0.8, n2) * (1.0 - riskFactor * 0.4));
+        color = mix(color, accentColor * 0.7, smoothstep(0.4, 0.95, n3 + combined * 0.3));
 
         // Center vignette & depth contrast
         float dist = distance(uv, vec2(0.5, 0.45));

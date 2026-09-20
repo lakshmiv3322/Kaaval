@@ -43,25 +43,55 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
 
   const scenario = SCENARIO_PRESETS.find((s) => s.id === selectedScenarioId) || SCENARIO_PRESETS[0];
 
-  // Listen for sync messages from family dashboard (e.g. family barge-in or voice warning)
+  const [familyWarning, setFamilyWarning] = useState<string | null>(null);
+  const timerRef = useRef(0);
+  const sessionRef = useRef<CallSession | null>(null);
+
+  // Keep refs in sync with state (read-only from effects without deps)
+  useEffect(() => { timerRef.current = timerSeconds; }, [timerSeconds]);
+  useEffect(() => { sessionRef.current = callSession; }, [callSession]);
+
+  // Listen for sync messages from family dashboard
   useEffect(() => {
     const unsubscribe = syncBus.subscribe((msg) => {
       if (msg.type === 'FAMILY_BARGE_IN') {
         setChildAlertState('connected');
-        if (callSession) {
-          setCallSession({
-            ...callSession,
+        if (sessionRef.current) {
+          const updated: CallSession = {
+            ...sessionRef.current,
             status: 'barged-in',
             bargeInActive: true,
-          });
+          };
+          sessionRef.current = updated;
+          setCallSession(updated);
         }
       } else if (msg.type === 'VOICE_WARNING_SENT') {
-        // Voice warning chime
-        alert(`🚨 Audio Warning from Family: "${msg.payload.warningText}"`);
+        const text = msg.payload.warningText;
+        setFamilyWarning(text);
+        try {
+          window.speechSynthesis.cancel();
+          const utt = new SpeechSynthesisUtterance(text);
+          utt.rate = 0.9;
+          window.speechSynthesis.speak(utt);
+        } catch (_e) {
+          // speech unavailable — no-op
+        }
+        setTimeout(() => setFamilyWarning(null), 12000);
+      } else if (msg.type === 'FAMILY_HANGUP') {
+        setIsPlaying(false);
+        if (sessionRef.current) {
+          const endedSession: CallSession = {
+            ...sessionRef.current,
+            status: 'ended',
+            durationSeconds: timerRef.current,
+          };
+          sessionRef.current = endedSession;
+          setCallSession(endedSession);
+        }
       }
     });
     return unsubscribe;
-  }, [callSession]);
+  }, []);
 
   // Call duration timer
   useEffect(() => {
@@ -76,88 +106,77 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
 
   // Step-by-step scenario player
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || currentChunkIndex >= scenario.chunks.length - 1) return;
 
-    if (currentChunkIndex < scenario.chunks.length - 1) {
-      const nextIndex = currentChunkIndex + 1;
-      const chunkData = scenario.chunks[nextIndex];
-      const timeout = setTimeout(() => {
-        setCurrentChunkIndex(nextIndex);
+    const nextIndex = currentChunkIndex + 1;
+    const chunkData = scenario.chunks[nextIndex];
 
-        const newChunk: TranscriptChunk = {
-          id: `chunk-${nextIndex}`,
-          timestamp: formatTime(timerSeconds),
-          speaker: chunkData.speaker,
-          text: chunkData.text,
-          translation: chunkData.translation,
-          tacticFlag: chunkData.tactic?.name,
-          riskDelta: chunkData.riskScore,
+    const timeout = setTimeout(() => {
+      const prev = sessionRef.current;
+      if (!prev) return;
+
+      const newChunk: TranscriptChunk = {
+        id: `chunk-${nextIndex}`,
+        timestamp: formatTime(timerRef.current),
+        speaker: chunkData.speaker,
+        text: chunkData.text,
+        translation: chunkData.translation,
+        tacticFlag: chunkData.tactic?.name,
+        riskDelta: chunkData.riskScore,
+      };
+
+      const updatedTactics = chunkData.tactic
+        ? [...prev.detectedTactics.filter((t) => t.id !== chunkData.tactic!.id), chunkData.tactic]
+        : prev.detectedTactics;
+
+      const updatedRisk = chunkData.riskScore;
+      const updatedLevel = updatedRisk > 65 ? 'high-risk' : updatedRisk > 30 ? 'suspicious' : 'safe';
+
+      const shouldAlert = updatedRisk >= 65 && !prev.alertTriggered;
+
+      const updatedSession: CallSession = {
+        ...prev,
+        riskScore: updatedRisk,
+        riskLevel: updatedLevel,
+        detectedTactics: updatedTactics,
+        transcript: [...prev.transcript, newChunk],
+        alertTriggered: prev.alertTriggered || shouldAlert,
+      };
+
+      // Commit to ref first so subsequent callbacks see the latest session
+      sessionRef.current = updatedSession;
+
+      // Batch state updates
+      setCurrentChunkIndex(nextIndex);
+      setLiveTranscript((t) => [...t, newChunk]);
+      setCallSession(updatedSession);
+
+      // Side effects OUTSIDE any setState updater (safe in StrictMode)
+      if (shouldAlert) {
+        const alertPayload = {
+          id: `alert-${Date.now()}`,
+          callId: prev.id,
+          elderName: prev.elderName,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          riskScore: updatedRisk,
+          tactics: updatedTactics.map((t) => t.name),
+          summary: chunkData.text,
+          status: 'active' as const,
         };
+        syncBus.publish({ type: 'NEW_ALERT', payload: alertPayload });
+        api.triggerFamilyAlert(alertPayload);
+      }
 
-        setLiveTranscript((prev) => [...prev, newChunk]);
+      syncBus.publish({ type: 'CALL_UPDATE', payload: updatedSession });
+    }, chunkData.delayMs / speedMultiplier);
 
-        // Update call session
-        setCallSession((prev) => {
-          if (!prev) return null;
-          const updatedTactics = chunkData.tactic
-            ? [...prev.detectedTactics.filter((t) => t.id !== chunkData.tactic!.id), chunkData.tactic]
-            : prev.detectedTactics;
-
-          const updatedRisk = chunkData.riskScore;
-          const updatedLevel = updatedRisk > 65 ? 'high-risk' : updatedRisk > 30 ? 'suspicious' : 'safe';
-
-          const updatedSession: CallSession = {
-            ...prev,
-            riskScore: updatedRisk,
-            riskLevel: updatedLevel,
-            detectedTactics: updatedTactics,
-            transcript: [...prev.transcript, newChunk],
-          };
-
-          // If risk exceeds threshold (65) and alert not yet sent, trigger family alert
-          if (updatedRisk >= 65 && !prev.alertTriggered) {
-            updatedSession.alertTriggered = true;
-            syncBus.publish({
-              type: 'NEW_ALERT',
-              payload: {
-                id: `alert-${Date.now()}`,
-                callId: prev.id,
-                elderName: prev.elderName,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                riskScore: updatedRisk,
-                tactics: updatedTactics.map((t) => t.name),
-                summary: chunkData.text,
-                status: 'active',
-              },
-            });
-            api.triggerFamilyAlert({
-              id: `alert-${Date.now()}`,
-              callId: prev.id,
-              elderName: prev.elderName,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              riskScore: updatedRisk,
-              tactics: updatedTactics.map((t) => t.name),
-              summary: chunkData.text,
-              status: 'active',
-            });
-          }
-
-          // Sync with family screen
-          syncBus.publish({
-            type: 'CALL_UPDATE',
-            payload: updatedSession,
-          });
-
-          return updatedSession;
-        });
-      }, chunkData.delayMs / speedMultiplier);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [isPlaying, currentChunkIndex, scenario, speedMultiplier, timerSeconds]);
+    return () => clearTimeout(timeout);
+  }, [isPlaying, currentChunkIndex, scenario, speedMultiplier]);
 
   const handleStartCall = async () => {
     const newSession = await api.startCall(selectedScenarioId);
+    sessionRef.current = newSession;
+    timerRef.current = 0;
     setCallSession(newSession);
     setCurrentChunkIndex(-1);
     setLiveTranscript([]);
@@ -179,6 +198,7 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
         status: 'ended',
         durationSeconds: timerSeconds,
       };
+      sessionRef.current = endedSession;
       setCallSession(endedSession);
       syncBus.publish({
         type: 'CALL_UPDATE',
@@ -193,6 +213,7 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
     setLiveTranscript([]);
     setTimerSeconds(0);
     setChildAlertState('idle');
+    sessionRef.current = null;
     setCallSession(null);
     syncBus.publish({ type: 'RESET_STATE' });
   };
@@ -214,9 +235,6 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
         },
       });
     }
-    setTimeout(() => {
-      setChildAlertState('calling');
-    }, 2000);
   };
 
   const formatTime = (secs: number) => {
@@ -563,6 +581,26 @@ export const ElderScreen: React.FC<ElderScreenProps> = ({ onNavigate }) => {
           </div>
         </div>
       </footer>
+
+      {/* Family Voice Warning Toast */}
+      <AnimatePresence>
+        {familyWarning && (
+          <motion.div
+            role="alert"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 40 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4"
+          >
+            <div className="p-4 rounded-2xl bg-[#1a0f12] border border-red-500/50 shadow-2xl shadow-red-900/30 text-center">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-red-400 mb-1">
+                Voice Warning from Your Family
+              </p>
+              <p className="text-lg font-semibold text-white leading-snug">{familyWarning}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

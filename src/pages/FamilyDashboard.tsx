@@ -49,20 +49,6 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
     const unsubscribe = syncBus.subscribe((msg) => {
       if (msg.type === 'NEW_ALERT') {
         setActiveAlert(msg.payload);
-      } else if (msg.type === 'CALL_UPDATE') {
-        const update = msg.payload;
-        if (update.riskScore && update.riskScore > 60 && !activeAlert) {
-          setActiveAlert({
-            id: `alert-${Date.now()}`,
-            callId: update.id || 'current',
-            elderName: update.elderName || 'Mother (Kavitha)',
-            timestamp: 'Just now',
-            riskScore: update.riskScore,
-            tactics: update.detectedTactics?.map((t) => t.name) || ['High Coercion'],
-            summary: update.transcript?.[update.transcript.length - 1]?.text || 'Caller claims to be police. Threatening digital arrest.',
-            status: 'active',
-          });
-        }
       } else if (msg.type === 'RESET_STATE') {
         setActiveAlert(null);
         setIsBargeInOpen(false);
@@ -71,7 +57,7 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
     });
 
     return unsubscribe;
-  }, [activeAlert]);
+  }, []);
 
   const handleCallMomNow = () => {
     setIsBargeInOpen(true);
@@ -96,13 +82,12 @@ export const FamilyDashboard: React.FC<FamilyDashboardProps> = ({ onNavigate }) 
   };
 
   const handleHangupBoth = () => {
+    const callId = activeAlert?.callId || 'live';
     setIsBargeInOpen(false);
     setActiveAlert(null);
     syncBus.publish({
-      type: 'CALL_UPDATE',
-      payload: {
-        status: 'ended',
-      },
+      type: 'FAMILY_HANGUP',
+      payload: { callId },
     });
   };
 

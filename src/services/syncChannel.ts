@@ -5,6 +5,7 @@ type SyncMessage =
   | { type: 'NEW_ALERT'; payload: FamilyAlert }
   | { type: 'FAMILY_BARGE_IN'; payload: { callId: string; message: string } }
   | { type: 'VOICE_WARNING_SENT'; payload: { callId: string; warningText: string } }
+  | { type: 'FAMILY_HANGUP'; payload: { callId: string } }
   | { type: 'RESET_STATE' };
 
 class SyncBus {
@@ -23,7 +24,8 @@ class SyncBus {
       }
     }
 
-    if (typeof window !== 'undefined') {
+    // Register storage fallback ONLY when BroadcastChannel is unavailable
+    if (typeof window !== 'undefined' && !this.channel) {
       window.addEventListener('storage', (e) => {
         if (e.key === 'kaaval_sync_msg' && e.newValue) {
           try {
